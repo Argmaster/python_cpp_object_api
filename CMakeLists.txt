@@ -14,14 +14,15 @@ include_directories(${INCLUDES})
 
 set(PYTHON_LIB_FILES "D:/dev/python/python395/libs/python39.lib")
 
-set(SOURCE
-    source/Object.cpp
+file(GLOB GLOB_SOURCES
+    source/*.cpp
 )
 
 enable_testing()
 
-add_executable(Unit_Object ${SOURCE} ${PROJECT_SOURCE_DIR}/test/u_Object.cpp)
+add_executable(Unit_Object ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Object.cpp)
 add_test("Py::Object construction" Unit_Object "1")
+add_test("Py::Object casts" Unit_Object "2")
 
 target_link_libraries(
     Unit_Object

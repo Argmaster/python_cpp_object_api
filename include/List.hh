@@ -1,3 +1,4 @@
+#pragma once
 #include "Common.hh"
 
 namespace Py
@@ -7,21 +8,9 @@ namespace Py
         using __WrapperInterface::__WrapperInterface;
 
         /// Construct List out of New PyObject Reference
-        static List         FromNew(PyObject* py_new_ref) { return { py_new_ref }; } // ! new reference construction
+        static List         FromNew(PyObject* py_new_ref) { return List(py_new_ref); } // ! new reference construction
         /// Construct List out of Borrowed PyObject Reference
-        static List         FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return { py_weak_ref }; } // ? borrowed reference construction
-        operator Object () { return Object::FromOld(m_ref); }
-        operator Long () { return Long::FromOld(m_ref); }
-        operator Float () { return Float::FromOld(m_ref); }
-        operator Complex () { return Complex::FromOld(m_ref); }
-        operator Bool () { return Bool::FromOld(m_ref); }
-        operator Str () { return Str::FromOld(m_ref); }
-        operator Bytes () { return Bytes::FromOld(m_ref); }
-        operator ByteArray () { return ByteArray::FromOld(m_ref); }
-        // operator List () { return List::FromOld(m_ref); }
-        operator Tuple () { return Tuple::FromOld(m_ref); }
-        operator Dict () { return Dict::FromOld(m_ref); }
-        operator Set () { return Set::FromOld(m_ref); }
-        operator FrozenSet () { return FrozenSet::FromOld(m_ref); }
+        static List         FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return List(py_weak_ref); } // ? borrowed reference construction
+
     };
 }

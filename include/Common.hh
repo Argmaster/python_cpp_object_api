@@ -10,13 +10,47 @@
 #define _DEBUG 1
 #endif
 #include <iostream>
-#include <string>
 #include <vector>
+#include <string>
 #include <unordered_map>
 
+struct Object;
+struct Long;
+struct Float;
+struct Complex;
+struct Bool;
+struct Str;
+struct Bytes;
+struct ByteArray;
+struct List;
+struct Tuple;
+struct Dict;
+struct Set;
+struct FrozenSet;
+
+#ifdef _DEBUG
+#define __LOG(info) std::cout << info << std::endl;
+#else
+#define __LOG(info)
+#endif
 
 namespace Py
 {
+    struct Object;
+    struct Long;
+    struct Float;
+    struct Complex;
+    struct Bool;
+    struct Str;
+    struct Bytes;
+    struct ByteArray;
+    struct List;
+    struct Tuple;
+    struct Dict;
+    struct Set;
+    struct FrozenSet;
+
+
     class __WrapperInterface
     {
     protected:
@@ -24,23 +58,27 @@ namespace Py
         /// Default constructor only for inner usage
         __WrapperInterface() : m_ref(nullptr) {}
         /// Assume that pointer given is a new reference
-        __WrapperInterface(PyObject* py_object)
+        explicit __WrapperInterface(PyObject* py_object)
             : m_ref(py_object) {
-            printf("New object\n");
+            __LOG("__WrapperInterface New!");
         }
     public:
-        /// Copies reference contained by Str, refcount is incremented
+        /// Copies reference contained by __WrapperInterface, refcount is incremented
         __WrapperInterface(const __WrapperInterface& moved_object)
             : m_ref(moved_object.m_ref) {
             Py_XINCREF(moved_object.m_ref);
+            __LOG("__WrapperInterface Copied!");
         }
-        /// Moves reference contained by Str, assumes new reference
+        /// Moves reference contained by __WrapperInterface, refcount is not incremented
         __WrapperInterface(__WrapperInterface&& moved_object)
             : m_ref(moved_object.m_ref) {
             moved_object.m_ref = nullptr;
+            //Py_XINCREF(moved_object.m_ref);
+            __LOG("__WrapperInterface Moved!");
         }
         /// When dies always decrefs underlying PyObject pointer (null-safe)
         virtual ~__WrapperInterface() {
+            __LOG("__WrapperInterface DECREF!");
             Py_XDECREF(m_ref);
         }
         /// Cast to polimorphic PyObject*
@@ -54,6 +92,7 @@ namespace Py
         inline bool         IsNotNull() const { return m_ref != NULL; }
         /// Acquire reference count of underlying PyObject
         inline Py_ssize_t   RefC() const { return Py_REFCNT(m_ref); }
+        inline PyObject*    GetRef() const { return m_ref; }
         /* -------------------------------------------------------------------------- */
         /*                            Type checks shortcuts                           */
         /* -------------------------------------------------------------------------- */
@@ -87,5 +126,3 @@ namespace Py
 #include "Set.hh"
 #include "FrozenSet.hh"
 
-
-#define __LOG(info) std::cout << info << std::cout;

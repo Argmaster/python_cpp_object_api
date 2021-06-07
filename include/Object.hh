@@ -7,24 +7,26 @@ namespace Py
     struct Object : public __WrapperInterface
     {
         using __WrapperInterface::__WrapperInterface;
-        /// Construct Object out of New PyObject Reference
-        static Object       FromNew(PyObject* py_new_ref) { return { py_new_ref }; } // ! new reference construction
-        /// Construct Object out of Borrowed PyObject Reference
-        static Object       FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return { py_weak_ref }; } // ? borrowed reference construction
-        // operator Object () { return Object::FromOld(m_ref); }
-        operator Long () { return Long::FromOld(m_ref); }
-        operator Float () { return Float::FromOld(m_ref); }
-        operator Complex () { return Complex::FromOld(m_ref); }
-        operator Bool () { return Bool::FromOld(m_ref); }
-        operator Str () { return Str::FromOld(m_ref); }
-        operator Bytes () { return Bytes::FromOld(m_ref); }
-        operator ByteArray () { return ByteArray::FromOld(m_ref); }
-        operator List () { return List::FromOld(m_ref); }
-        operator Tuple () { return Tuple::FromOld(m_ref); }
-        operator Dict () { return Dict::FromOld(m_ref); }
-        operator Set () { return Set::FromOld(m_ref); }
-        operator FrozenSet () { return FrozenSet::FromOld(m_ref); }
-
+        /// Construct Str out of New PyObject Reference
+        static Object FromNew(PyObject* py_new_ref) { return Object(py_new_ref); } // ! new reference construction
+        /// Construct Str out of Borrowed PyObject Reference
+        static Object FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Object(py_weak_ref); } // ? borrowed reference construction
+        /* -------------------------------------------------------------------------- */
+        /*                 Implicit dynamic casts among wrapper types                 */
+        /* -------------------------------------------------------------------------- */
+        // operator Object ();
+        operator Long ();
+        operator Float ();
+        operator Complex ();
+        operator Bool ();
+        operator Str ();
+        operator Bytes ();
+        operator ByteArray ();
+        operator List ();
+        operator Tuple ();
+        operator Dict ();
+        operator Set ();
+        operator FrozenSet ();
         /* -------------------------------------------------------------------------- */
         /*                        Python C API Object Protocol                        */
         /* -------------------------------------------------------------------------- */
@@ -38,6 +40,11 @@ namespace Py
         // Retrieve an attribute named attr_name from object o.
         // Returns the attribute value on success, or NULL on failure.
         // This is the equivalent of the Python expression o.attr_name.
+        // ! NOTE, day 07.06.2021, Poland, CPython 3.9.5
+        // ! this function has a strange behaviour of incrementing refcount of attr_name
+        // ! therefore in implementation of GetAttr method there is Py_DECREF(attr_name)
+        // ! If problem was caused by bug, which has already been fixed, you should contact
+        // ! author of this library to make him update the code
         Object          GetAttr(Str attr_name) const;
         // Set the value of the attribute named attr_name, for object o, to the value v.
         // Raise an exception and return -1 on failure; return 0 on success.This is the
@@ -50,29 +57,41 @@ namespace Py
         int             DelAttr(Str attr_name) const;
         // Return element of o corresponding to the object key or NULL on failure.
         // This is the equivalent of the Python expression o[key].
-        Object          GetItem(Object attr_name) const;
+        Object          GetItem(Str attr_name) const;
         // Map the object key to the value v. Raise an exception and return -1 on failure;
         // return 0 on success.This is the equivalent of the Python statement o[key] = v.
         // This function does not steal a reference to v.
-        int             SetItem(Object attr_name, PyObject * value) const;
+        int             SetItem(Str attr_name, PyObject * value) const;
         // Remove the mapping for the object key from the object o. Return -1 on failure.
         // This is equivalent to the Python statement del o[key].
-        int             DelItem(Object attr_name) const;
+        int             DelItem(Str attr_name) const;
         /* -------------------------------------------------------------------------- */
         /*                                 Comparisons                                */
         /* -------------------------------------------------------------------------- */
         /// Less than comparison. This is the equivalent of the Python expression a < b
-        Object          LT(Object other) const;
+        Bool            LT(Object other) const;
+        /// Less than comparison. This is the equivalent of the Python expression a < b
+        Bool            operator < (Object other) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        Object          LE(Object other) const;
+        Bool            LE(Object other) const;
+        /// Less or equal comparison. This is the equivalent of the Python expression a <= b
+        Bool            operator <= (Object other) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
-        Object          EQ(Object other) const;
+        Bool            EQ(Object other) const;
+        /// Equal comparison. This is the equivalent of the Python expression a == b
+        Bool            operator == (Object other) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
-        Object          NE(Object other) const;
+        Bool            NE(Object other) const;
+        /// Not equal comparison. This is the equivalent of the Python expression a != b
+        Bool            operator != (Object other) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
-        Object          GT(Object other) const;
+        Bool            GT(Object other) const;
+        /// Greater than comparison. This is the equivalent of the Python expression a > b
+        Bool            operator > (Object other) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        Object          GE(Object other) const;
+        Bool            GE(Object other) const;
+        /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
+        Bool            operator >= (Object other) const;
         /* -------------------------------------------------------------------------- */
         /*                       Type operations and conversions                      */
         /* -------------------------------------------------------------------------- */
@@ -146,6 +165,6 @@ namespace Py
         // This is equivalent to the Python expression iter(o). It returns a new iterator
         // for the object argument, or the object itself if the object is already an iterator.
         // Raises TypeError and returns NULL if the object cannot be iterated.
-            Object          Iter() { return FromNew(PyObject_GetIter(m_ref)); }
+        Object          Iter() { return FromNew(PyObject_GetIter(m_ref)); }
     };
 } // namespace Py
