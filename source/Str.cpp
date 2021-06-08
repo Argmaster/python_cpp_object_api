@@ -22,7 +22,7 @@ namespace Py
     /* -------------------------------------------------------------------------- */
     /*                         String encoding operations                         */
     /* -------------------------------------------------------------------------- */
-    bool  Str::AsUTF8() const { return PyUnicode_AsUTF8(m_ref); }
+    std::string Str::AsUTF8() const { return PyUnicode_AsUTF8(m_ref); }
     Bytes Str::Encode(const char* encoding, const char* errors) const {
         return Bytes::FromNew(PyUnicode_AsEncodedString(m_ref, encoding, errors));
     }

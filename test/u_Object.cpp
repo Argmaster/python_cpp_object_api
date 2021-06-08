@@ -52,15 +52,19 @@ void test_3()
 // other ops tests
 void test_4()
 {
-    Py::Object o1 = Py::Object::FromNew(PyUnicode_FromString("ala"));
-    Py::Object o2 = Py::Object::FromNew(PyUnicode_FromString("kot"));
-    assert((o1 > o2) == true);
+    Py::Object o2 = Py::Str::New("Koteu");
+    std::cout << o2.As<Py::Str>().AsUTF8() << std::endl;
+    Py::Object o1 = Py::Str::New("Ala");
+
+    //assert((o1 > o2) == true);
+    //assert((o1 < o2) == false);
 }
 
 int main(int argc, char* argv[], char* env[])
 {
     Py_Initialize();
-    switch (argc > 1 ? atoi(argv[0]) : -1) {
+    auto index = argc > 1 ? atoi(argv[1]) : -1;
+    switch (index) {
         case(1):
         {
             test_1();

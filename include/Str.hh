@@ -7,13 +7,16 @@ namespace Py
     struct Str : public __WrapperInterface
     {
         using __WrapperInterface::__WrapperInterface;
-        Str(const std::string& _string) {
-            m_ref = PyUnicode_FromStringAndSize(_string.c_str(), _string.length());
-        }
         /// Construct Str out of New PyObject Reference
         static Str FromNew(PyObject* py_new_ref) { return Str(py_new_ref); } // ! new reference construction
         /// Construct Str out of Borrowed PyObject Reference
         static Str FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Str(py_weak_ref); } // ? borrowed reference construction
+        static Str New(std::string _string) {
+            // TODO Fix segfault when creating new string from c string
+            return Str::FromNew(
+                PyUnicode_FromKindAndData(PyUnicode_1BYTE_KIND, _string.c_str(), _string.length())
+            );
+        }
         /* -------------------------------------------------------------------------- */
         /*                 Implicit dynamic casts among wrapper types                 */
         /* -------------------------------------------------------------------------- */
@@ -39,7 +42,7 @@ namespace Py
         // Return a pointer to the UTF-8 encoding of the Unicode object.
         // The returned buffer always has an extra null byte appended(not included in size),
         // regardless of whether there are any other null code points.
-        bool        AsUTF8() const;
+        std::string AsUTF8() const;
         /*
             Encode a Unicode object with selected charmap and return the result as Python bytes object.
             The default for errors is 'strict', meaning that encoding errors raise a UnicodeError.

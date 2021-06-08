@@ -23,6 +23,8 @@ enable_testing()
 add_executable(Unit_Object ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Object.cpp)
 add_test("Py::Object construction" Unit_Object "1")
 add_test("Py::Object casts" Unit_Object "2")
+add_test("Py::Object methods" Unit_Object "3")
+add_test("Py::Object other ops" Unit_Object "4")
 
 target_link_libraries(
     Unit_Object

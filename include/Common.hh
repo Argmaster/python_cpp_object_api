@@ -54,7 +54,7 @@ namespace Py
     class __WrapperInterface
     {
     protected:
-        PyObject* m_ref;
+        PyObject* m_ref = nullptr;
         /// Default constructor only for inner usage
         __WrapperInterface() : m_ref(nullptr) {}
         /// Assume that pointer given is a new reference
