@@ -9,10 +9,10 @@ set(INCLUDES
     ${PROJECT_SOURCE_DIR}/include
     "D:\\dev\\python\\python395\\include"
 )
+set(PYTHON_LIB_FILES "D:/dev/python/python395/libs/python39.lib")
 
 include_directories(${INCLUDES})
-
-set(PYTHON_LIB_FILES "D:/dev/python/python395/libs/python39.lib")
+link_libraries(${PYTHON_LIB_FILES})
 
 file(GLOB GLOB_SOURCES
     source/*.cpp
@@ -26,7 +26,8 @@ add_test("Py::Object casts" Unit_Object "2")
 add_test("Py::Object methods" Unit_Object "3")
 add_test("Py::Object other ops" Unit_Object "4")
 
-target_link_libraries(
-    Unit_Object
-    ${PYTHON_LIB_FILES}
-    )
+add_executable(Unit_Str ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Str.cpp)
+add_test("Py::Str construction" Unit_Str "1")
+add_test("Py::Str casts" Unit_Str "2")
+add_test("Py::Str methods" Unit_Str "3")
+add_test("Py::Str other ops" Unit_Str "4")

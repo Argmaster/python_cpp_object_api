@@ -7,8 +7,8 @@ namespace Py
     {
         using __WrapperInterface::__WrapperInterface;
         // Custom class constuctor from C bool to Python Bool
-        Bytes(const std::string& _string) {
-            m_ref = PyBytes_FromStringAndSize(_string.c_str(), _string.length());
+        static Bytes New(const std::string& _string) {
+            return Bytes::FromNew(PyBytes_FromStringAndSize(_string.c_str(), _string.length()));
         }
         /// Construct Bytes out of New PyObject Reference
         static Bytes         FromNew(PyObject* py_new_ref) { return Bytes(py_new_ref); } // ! new reference construction

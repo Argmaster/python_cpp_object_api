@@ -4,7 +4,7 @@
 
 namespace Py
 {
-    struct Object : public __WrapperInterface
+    struct Object
     {
         using __WrapperInterface::__WrapperInterface;
         /// Construct Str out of New PyObject Reference
@@ -36,15 +36,16 @@ namespace Py
         // Returns true if object has attribute attr_name
         // This is equivalent to the Python expression hasattr(o, attr_name).
         // This function always succeeds.
+        // -----------------------------------------------------------------------------
+        // ! NOTE, day 07.06.2021, Poland, CPython 3.9.5
+        // ! this function has a strange behaviour, likely caused by some caching system,
+        // ! that it increments refcount of attr_name however it turns out that if we
+        // ! forcibly DECREF object INCREFED by HasAttr, It will very likely cause SEGFAULTS
+        // ! in least expected palces, eg. PyUnicode_FromString turned out to be failing becouse of it!
         bool            HasAttr(Str attr_name) const;
         // Retrieve an attribute named attr_name from object o.
         // Returns the attribute value on success, or NULL on failure.
         // This is the equivalent of the Python expression o.attr_name.
-        // ! NOTE, day 07.06.2021, Poland, CPython 3.9.5
-        // ! this function has a strange behaviour of incrementing refcount of attr_name
-        // ! therefore in implementation of GetAttr method there is Py_DECREF(attr_name)
-        // ! If problem was caused by bug, which has already been fixed, you should contact
-        // ! author of this library to make him update the code
         Object          GetAttr(Str attr_name) const;
         // Set the value of the attribute named attr_name, for object o, to the value v.
         // Raise an exception and return -1 on failure; return 0 on success.This is the
@@ -113,7 +114,7 @@ namespace Py
         // and a bytes object on success.This is equivalent to the Python expression
         // bytes(o), when o is not an integer.Unlike bytes(o), a TypeError is raised
         // when o is an integer instead of a zero - initialized bytes object.
-        Str             ToBytes() const;
+        Bytes           ToBytes() const;
         // Compute and return the hash value of an object o. On failure, return -1.
         // This is the equivalent of the Python expression hash(o).
         Py_hash_t       Hash() const;

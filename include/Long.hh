@@ -7,8 +7,8 @@ namespace Py
     {
         using __WrapperInterface::__WrapperInterface;
         // Custom class constuctor from C bool to Python Bool
-        Long(long _long) {
-            m_ref = PyLong_FromLong(_long);
+        static Long New(long _long) {
+            return Long::FromNew(PyLong_FromLong(_long));
         }
         /// Construct Long out of New PyObject Reference
         static Long         FromNew(PyObject* py_new_ref) { return Long(py_new_ref); } // ! new reference construction

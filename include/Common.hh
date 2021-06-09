@@ -36,6 +36,7 @@ struct FrozenSet;
 
 namespace Py
 {
+    // Forward declare classes for all basic builtin Python data types
     struct Object;
     struct Long;
     struct Float;
@@ -50,18 +51,19 @@ namespace Py
     struct Set;
     struct FrozenSet;
 
-
+    // Base class for data type classes, provides part of object interface that
+    // Should be available in every class, eg. type checks
     class __WrapperInterface
     {
     protected:
+        // Actuall underlying PyObject, which refcount will be controled
         PyObject* m_ref = nullptr;
-        /// Default constructor only for inner usage
-        __WrapperInterface() : m_ref(nullptr) {}
         /// Assume that pointer given is a new reference
         explicit __WrapperInterface(PyObject* py_object)
             : m_ref(py_object) {
             __LOG("__WrapperInterface New!");
         }
+
     public:
         /// Copies reference contained by __WrapperInterface, refcount is incremented
         __WrapperInterface(const __WrapperInterface& moved_object)
@@ -78,7 +80,10 @@ namespace Py
         }
         /// When dies always decrefs underlying PyObject pointer (null-safe)
         virtual ~__WrapperInterface() {
-            __LOG("__WrapperInterface DECREF!");
+#ifdef _DEBUG
+            if (IsNotNull())
+                __LOG("__WrapperInterface DECREF! " << RefC() << " (-1)");
+#endif
             Py_XDECREF(m_ref);
         }
         /// Cast to polimorphic PyObject*
@@ -108,6 +113,7 @@ namespace Py
         inline bool         IsDict() { return PyDict_CheckExact(m_ref); }
         inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
         inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
+
     };
 }
 

@@ -6,8 +6,8 @@ namespace Py
     {
         using __WrapperInterface::__WrapperInterface;
         // Custom class constuctor from C bool to Python Bool
-        Complex(long double _real, long double _imag) {
-            m_ref = PyComplex_FromDoubles(_real, _imag);
+        static Complex New(long double _real, long double _imag) {
+            return Complex::FromNew(PyComplex_FromDoubles(_real, _imag));
         }
         /// Construct Complex out of New PyObject Reference
         static Complex         FromNew(PyObject* py_new_ref) { return Complex(py_new_ref); } // ! new reference construction

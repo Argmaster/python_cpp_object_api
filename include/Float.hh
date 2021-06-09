@@ -7,8 +7,8 @@ namespace Py
     {
         using __WrapperInterface::__WrapperInterface;
         // Custom class constuctor from C bool to Python Bool
-        Float(long double _value) {
-            m_ref = PyFloat_FromDouble(_value);
+        static Float New(long double _value) {
+            return Float::FromNew(PyFloat_FromDouble(_value));
         }
         /// Construct Float out of New PyObject Reference
         static Float         FromNew(PyObject* py_new_ref) { return Float(py_new_ref); } // ! new reference construction

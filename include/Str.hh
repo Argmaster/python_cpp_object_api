@@ -7,14 +7,16 @@ namespace Py
     struct Str : public __WrapperInterface
     {
         using __WrapperInterface::__WrapperInterface;
+        Str(const char* str) : __WrapperInterface(nullptr) {
+            m_ref = PyUnicode_FromString(str);
+        }
         /// Construct Str out of New PyObject Reference
         static Str FromNew(PyObject* py_new_ref) { return Str(py_new_ref); } // ! new reference construction
         /// Construct Str out of Borrowed PyObject Reference
         static Str FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Str(py_weak_ref); } // ? borrowed reference construction
         static Str New(std::string _string) {
-            // TODO Fix segfault when creating new string from c string
             return Str::FromNew(
-                PyUnicode_FromKindAndData(PyUnicode_1BYTE_KIND, _string.c_str(), _string.length())
+                PyUnicode_FromStringAndSize(_string.c_str(), _string.length())
             );
         }
         /* -------------------------------------------------------------------------- */
