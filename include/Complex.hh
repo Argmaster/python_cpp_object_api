@@ -8,8 +8,8 @@ namespace Py
     public:
         using Object::Object;
         // Custom class constuctor from C bool to Python Bool
-        static Complex New(long double _real, long double _imag) {
-            return PyComplex_FromDoubles(_real, _imag);
+        Complex(long double _real, long double _imag) {
+            m_ref = PyComplex_FromDoubles(_real, _imag);
         }
 
     };

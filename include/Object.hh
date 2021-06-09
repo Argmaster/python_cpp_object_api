@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <stdarg.h>
 
 
 #ifdef _DEBUG
@@ -44,10 +45,14 @@ namespace Py
     protected:
         // Actuall underlying PyObject, which refcount will be controled
         PyObject* m_ref = nullptr;
+        // default constructor for internal usage
+        Object() : m_ref(nullptr) {
+            __LOG("Object FromNew!");
+        }
         /// Assume that pointer given is a new reference
         Object(PyObject* py_object)
             : m_ref(py_object) {
-            __LOG("Object New!");
+            __LOG("Object FromNew!");
         }
     public:
         /// Copies reference contained by Object, refcount is incremented
@@ -71,12 +76,14 @@ namespace Py
 #endif
             Py_XDECREF(m_ref);
         }
-        /// Construct Str out of New PyObject Reference
+        /// Construct Wrapper_T out of New PyObject Reference
         template<typename Wrapper_T>
-        friend Wrapper_T FromNew(PyObject* py_new_ref); // ! new reference construction
-        /// Construct Str out of Borrowed PyObject Reference
+        friend Wrapper_T New(PyObject* py_new_ref);
+        /// Construct Wrapper_T out of Borrowed PyObject Reference
         template<typename Wrapper_T>
-        friend Wrapper_T FromOld(PyObject* py_weak_ref); // ? borrowed reference construction
+        friend Wrapper_T Old(PyObject* py_weak_ref);
+        // stream out operator overload
+        friend std::ostream& operator << (std::ostream& os, Object py_object);
         // Explicit shortcut for null test
         inline bool         IsNull() const { return m_ref == NULL; }
         // Expilcit shortcut for not null test
@@ -87,8 +94,8 @@ namespace Py
         /* -------------------------------------------------------------------------- */
         /*                 Implicit dynamic casts among wrapper types                 */
         /* -------------------------------------------------------------------------- */
+        operator bool() { return PyObject_IsTrue(m_ref); }
         operator PyObject* () { return m_ref; }
-        operator bool() const { return PyObject_IsTrue(m_ref); }
         operator Object ();
         operator Long ();
         operator Float ();
@@ -103,7 +110,7 @@ namespace Py
         operator Set ();
         operator FrozenSet ();
         template<class cast_type>
-        cast_type           As() { return FromOld<cast_type>(m_ref); }
+        cast_type           As() { return Old<cast_type>(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                            Type checks shortcuts                           */
         /* -------------------------------------------------------------------------- */
@@ -135,30 +142,30 @@ namespace Py
         // ! that it increments refcount of attr_name however it turns out that if we
         // ! forcibly DECREF object INCREFED by HasAttr, It will very likely cause SEGFAULTS
         // ! in least expected palces, eg. PyUnicode_FromString turned out to be failing becouse of it!
-        bool            HasAttr(Str attr_name) const;
+        virtual bool            HasAttr(Str attr_name) const;
         // Retrieve an attribute named attr_name from object o.
         // Returns the attribute value on success, or NULL on failure.
         // This is the equivalent of the Python expression o.attr_name.
-        Object          GetAttr(Str attr_name) const;
+        virtual Object          GetAttr(Str attr_name) const;
         // Set the value of the attribute named attr_name, for object o, to the value v.
         // Raise an exception and return -1 on failure; return 0 on success.This is the
         // equivalent of the Python statement o.attr_name = v.
         // If v is NULL, the attribute is deleted, however this feature is deprecated in
         // favour of using PyObject_DelAttr().
-        int             SetAttr(Str attr_name, PyObject* value) const;
+        virtual int             SetAttr(Str attr_name, PyObject* value) const;
         // Delete attribute named attr_name, for object o. Returns -1 on failure.
         // This is the equivalent of the Python statement del o.attr_name.
-        int             DelAttr(Str attr_name) const;
+        virtual int             DelAttr(Str attr_name) const;
         // Return element of o corresponding to the object key or NULL on failure.
         // This is the equivalent of the Python expression o[key].
-        Object          GetItem(Str attr_name) const;
+        virtual Object          GetItem(Str attr_name) const;
         // Map the object key to the value v. Raise an exception and return -1 on failure;
         // return 0 on success.This is the equivalent of the Python statement o[key] = v.
         // This function does not steal a reference to v.
-        int             SetItem(Str attr_name, PyObject * value) const;
+        virtual int             SetItem(Str attr_name, PyObject * value) const;
         // Remove the mapping for the object key from the object o. Return -1 on failure.
         // This is equivalent to the Python statement del o[key].
-        int             DelItem(Str attr_name) const;
+        virtual int             DelItem(Str attr_name) const;
         /* -------------------------------------------------------------------------- */
         /*                                 Comparisons                                */
         /* -------------------------------------------------------------------------- */
@@ -193,6 +200,8 @@ namespace Py
         // representation on success, NULL on failure.This is the equivalent of the
         // Python expression repr(o).Called by the repr() built - in function.
         Str             Repr() const;
+        // Same as Repr, but returns C++ string
+        std::string     ReprCStr() const;
         // As PyObject_Repr(), compute a string representation of object o,
         // but escape the non-ASCII characters in the string returned by PyObject_Repr()
         // with \x, \u or \U escapes. This generates a string similar to that returned by
@@ -261,10 +270,18 @@ namespace Py
         // Raises TypeError and returns NULL if the object cannot be iterated.
         Object          Iter() { return PyObject_GetIter(m_ref); }
     };
+    // Create from PyObject* template factory functions
+    // One for new references
     template<typename Wrapper_T>
-    Wrapper_T FromNew(PyObject* py_new_ref) { return Wrapper_T(py_new_ref); }
+    Wrapper_T New(PyObject* py_new_ref) {
+        return Wrapper_T(py_new_ref);
+    }
+    // One for borrowed references
     template<typename Wrapper_T>
-    Wrapper_T FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Wrapper_T(py_weak_ref); }
+    Wrapper_T Old(PyObject* py_weak_ref) {
+        Py_XINCREF(py_weak_ref);
+        return Wrapper_T(py_weak_ref);
+    }
 } // namespace Py
 
 

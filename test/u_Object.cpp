@@ -4,12 +4,12 @@
 // construction tests
 void test_1()
 {
-    Py::Object o = Py::FromNew<Py::Object>(PyUnicode_FromString("object"));
+    Py::Object o = Py::New<Py::Object>(PyUnicode_FromString("object"));
     {
         assert(o.RefC() == 1);
         Py::Object o2(o);
         assert(o.RefC() == 2);
-        Py::Object o3(Py::FromOld<Py::Object>(o));
+        Py::Object o3(Py::Old<Py::Object>(o));
         assert(o.RefC() == 3);
     }
     assert(o.RefC() == 1);
@@ -17,7 +17,7 @@ void test_1()
 // casting tests
 void test_2()
 {
-    Py::Object o = Py::FromNew<Py::Object>(PyUnicode_FromString("object"));
+    Py::Object o = Py::New<Py::Object>(PyUnicode_FromString("object"));
     Py::Str str_o = o;
     assert(o.RefC() == 2);
     assert(str_o.RefC() == 2);
@@ -28,26 +28,24 @@ void test_2()
 // method tests
 void test_3()
 {
-    Py::Object o = Py::FromNew<Py::Object>(PyUnicode_FromString("object"));
-    assert(o.IsBool() == 0);
-    assert(o.IsByteArray() == 0);
-    assert(o.IsBytes() == 0);
-    assert(o.IsComplex() == 0);
-    assert(o.IsDict() == 0);
-    assert(o.IsFloat() == 0);
-    assert(o.IsFrozenSet() == 0);
-    assert(o.IsList() == 0);
-    assert(o.IsLong() == 0);
-    assert(o.IsNull() == 0);
-    assert(o.IsSet() == 0);
-    assert(o.IsStr() == 1);
-    assert(o.IsTrue() == 1);
-    assert(o.IsTuple() == 0);
-    assert(o.RefC() == 1);
-}
-// other ops tests
-void test_4()
-{
+    {
+        Py::Object o = Py::New<Py::Object>(PyUnicode_FromString("object"));
+        assert(o.IsBool() == 0);
+        assert(o.IsByteArray() == 0);
+        assert(o.IsBytes() == 0);
+        assert(o.IsComplex() == 0);
+        assert(o.IsDict() == 0);
+        assert(o.IsFloat() == 0);
+        assert(o.IsFrozenSet() == 0);
+        assert(o.IsList() == 0);
+        assert(o.IsLong() == 0);
+        assert(o.IsNull() == 0);
+        assert(o.IsSet() == 0);
+        assert(o.IsStr() == 1);
+        assert(o.IsTrue() == 1);
+        assert(o.IsTuple() == 0);
+        assert(o.RefC() == 1);
+    }
     Py::Object o1 = Py::Str::New("__doc__");
     Py::Object o2 = Py::Str::New("__ge__");
     {
@@ -131,17 +129,11 @@ int main(int argc, char* argv[], char* env[])
             test_3();
             break;
         }
-        case(4):
-        {
-            test_4();
-            break;
-        }
         default:
         {
             test_1();
             test_2();
             test_3();
-            test_4();
             break;
         }
     }

@@ -24,10 +24,13 @@ add_executable(Unit_Object ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Object.c
 add_test("Py::Object construction" Unit_Object "1")
 add_test("Py::Object casts" Unit_Object "2")
 add_test("Py::Object methods" Unit_Object "3")
-add_test("Py::Object other ops" Unit_Object "4")
 
 add_executable(Unit_Str ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Str.cpp)
 add_test("Py::Str construction" Unit_Str "1")
-add_test("Py::Str casts" Unit_Str "2")
+add_test("Py::Str encode" Unit_Str "2")
 add_test("Py::Str methods" Unit_Str "3")
-add_test("Py::Str other ops" Unit_Str "4")
+
+add_executable(Unit_Bytes ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Bytes.cpp)
+add_test("Py::Bytes conBytesuction" Unit_Bytes "1")
+add_test("Py::Bytes casts" Unit_Bytes "2")
+add_test("Py::Bytes methods" Unit_Bytes "3")

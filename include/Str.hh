@@ -10,8 +10,9 @@ namespace Py
         Str(const char* str) : Object(nullptr) {
             m_ref = PyUnicode_FromString(str);
         }
-        static Str New(std::string _string) {
-            return PyUnicode_FromStringAndSize(_string.c_str(), _string.length());
+        template<typename... Args>
+        static Str FromFormat(const std::string& _format, Args... args) {
+            return PyUnicode_FromFormat(_format.c_str(), args...);
         }
         /* -------------------------------------------------------------------------- */
         /*                         Python Unicode Object C API                        */
@@ -30,21 +31,23 @@ namespace Py
             and any other name registered via codecs.register_error(), see section Error Handlers.
             For a list of possible encodings, see section Standard Encodings.
         */
-        Bytes       Encode(const char* encoding, const char* errors = "strict") const;
+        Bytes       Encode(const char* encoding = "utf-8", const char* errors = "strict") const;
         /*
             Create a Unicode object by decoding size bytes of the encoded string s. encoding and
             errors have the same meaning as the parameters of the same name in the str() built-in function.
             The codec to be used is looked up using the Python codec registry. Return NULL if an exception
             was raised by the codec.
         */
-        static Str  Decode(const std::string& source, const char* encoding, const char* errors) {
+        static Str  Decode(const std::string& source, const char* encoding = "utf-8", const char* errors = "strict") {
             return PyUnicode_Decode(source.c_str(), source.length(), encoding, errors);
         }
         /* -------------------------------------------------------------------------- */
         /*                              String operations                             */
         /* -------------------------------------------------------------------------- */
-        // Concat two strings giving a new Unicode string.
+        // Concat two strings returning a new Unicode object.
         Str         Concat(Str other) const;
+        // Concat two strings returning a new Unicode object.
+        Str         operator + (Str other) const;
         /*
             Split a string giving a list of Unicode strings. If sep is NULL,
             splitting will be done at all whitespace substrings. Otherwise,
@@ -85,8 +88,6 @@ namespace Py
         Str         Replace(Str oldstr, Str newstr, Py_ssize_t maxcount = INT64_MAX) const;
         // Return a new string object by injecting args into string; this is analogous to format % args
         Str         CFormat(Tuple args) const;
-        // Return a new string object from format and args; this is analogous to format % args
-        static Str  CFormat(Str format, Tuple args) { return PyUnicode_Format(format, args); }
         // Return a new string object from format and args; this is analogous to Str(format).CFormat(args)
         Str         operator % (Tuple args) const;
     };

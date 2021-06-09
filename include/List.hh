@@ -8,6 +8,5 @@ namespace Py
     public:
         using Object::Object;
 
-
     };
 }
