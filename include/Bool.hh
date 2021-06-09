@@ -1,19 +1,27 @@
 #pragma once
-#include "Common.hh"
+#include "Object.hh"
 
 namespace Py
 {
-    struct Bool : public __WrapperInterface
+    class Bool : public Object
     {
-        using __WrapperInterface::__WrapperInterface;
+    public:
+        using Object::Object;
         // Custom class constuctor from C bool to Python Bool
         static Bool New(bool _bool) {
-            return Bool::FromNew(PyBool_FromLong(_bool));
+            return PyBool_FromLong(_bool);
         }
-        /// Construct Bool out of New PyObject Reference
-        static Bool         FromNew(PyObject* py_new_ref) { return Bool(py_new_ref); } // ! new reference construction
-        /// Construct Bool out of Borrowed PyObject Reference
-        static Bool         FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Bool(py_weak_ref); } // ? borrowed reference construction
-        operator bool() const { return PyObject_IsTrue(m_ref); }
+        friend bool operator > (bool first, Bool second);
+        friend bool operator >= (bool first, Bool second);
+        friend bool operator == (bool first, Bool second);
+        friend bool operator != (bool first, Bool second);
+        friend bool operator < (bool first, Bool second);
+        friend bool operator <= (bool first, Bool second);
+        friend bool operator > (Bool first, bool second);
+        friend bool operator >= (Bool first, bool second);
+        friend bool operator == (Bool first, bool second);
+        friend bool operator != (Bool first, bool second);
+        friend bool operator < (Bool first, bool second);
+        friend bool operator <= (Bool first, bool second);
     };
 }

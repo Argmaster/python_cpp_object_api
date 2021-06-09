@@ -1,20 +1,95 @@
 #pragma once
-#include "Common.hh"
+#ifdef _DEBUG
+#undef _DEBUG
+#define _DEBUG_MARKER 1
+#endif
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#ifdef _DEBUG_MARKER
+#undef _DEBUG_MARKER
+#define _DEBUG 1
+#endif
+#include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
+
+
+#ifdef _DEBUG
+#define __LOG(info) std::cout << info << std::endl;
+#else
+#define __LOG(info)
+#endif
 
 
 namespace Py
 {
-    struct Object
+    // Forward declare classes for all basic builtin Python data types
+    class Long;
+    class Float;
+    class Complex;
+    class Bool;
+    class Str;
+    class Bytes;
+    class ByteArray;
+    class List;
+    class Tuple;
+    class Dict;
+    class Set;
+    class FrozenSet;
+    // Base class for data type classes, provides part of object interface that
+    // Should be available in every class, eg. type checks
+    class Object
     {
-        using __WrapperInterface::__WrapperInterface;
+    protected:
+        // Actuall underlying PyObject, which refcount will be controled
+        PyObject* m_ref = nullptr;
+        /// Assume that pointer given is a new reference
+        Object(PyObject* py_object)
+            : m_ref(py_object) {
+            __LOG("Object New!");
+        }
+    public:
+        /// Copies reference contained by Object, refcount is incremented
+        Object(const Object& moved_object)
+            : m_ref(moved_object.m_ref) {
+            Py_XINCREF(moved_object.m_ref);
+            __LOG("Object Copied!");
+        }
+        /// Moves reference contained by Object, refcount is not incremented
+        Object(Object&& moved_object)
+            : m_ref(moved_object.m_ref) {
+            moved_object.m_ref = nullptr;
+            //Py_XINCREF(moved_object.m_ref);
+            __LOG("Object Moved!");
+        }
+        /// When dies always decrefs underlying PyObject pointer (null-safe)
+        virtual ~Object() {
+#ifdef _DEBUG
+            if (IsNotNull())
+                __LOG("Object DECREF! " << RefC() << " (-1)");
+#endif
+            Py_XDECREF(m_ref);
+        }
         /// Construct Str out of New PyObject Reference
-        static Object FromNew(PyObject* py_new_ref) { return Object(py_new_ref); } // ! new reference construction
+        template<typename Wrapper_T>
+        friend Wrapper_T FromNew(PyObject* py_new_ref); // ! new reference construction
         /// Construct Str out of Borrowed PyObject Reference
-        static Object FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Object(py_weak_ref); } // ? borrowed reference construction
+        template<typename Wrapper_T>
+        friend Wrapper_T FromOld(PyObject* py_weak_ref); // ? borrowed reference construction
+        // Explicit shortcut for null test
+        inline bool         IsNull() const { return m_ref == NULL; }
+        // Expilcit shortcut for not null test
+        inline bool         IsNotNull() const { return m_ref != NULL; }
+        /// Acquire reference count of underlying PyObject
+        inline Py_ssize_t   RefC() const { return Py_REFCNT(m_ref); }
+        inline PyObject*    GetRef() const { return m_ref; }
         /* -------------------------------------------------------------------------- */
         /*                 Implicit dynamic casts among wrapper types                 */
         /* -------------------------------------------------------------------------- */
-        // operator Object ();
+        operator PyObject* () { return m_ref; }
+        operator bool() const { return PyObject_IsTrue(m_ref); }
+        operator Object ();
         operator Long ();
         operator Float ();
         operator Complex ();
@@ -27,6 +102,24 @@ namespace Py
         operator Dict ();
         operator Set ();
         operator FrozenSet ();
+        template<class cast_type>
+        cast_type           As() { return FromOld<cast_type>(m_ref); }
+        /* -------------------------------------------------------------------------- */
+        /*                            Type checks shortcuts                           */
+        /* -------------------------------------------------------------------------- */
+        inline bool         IsLong() { return PyLong_CheckExact(m_ref); }
+        inline bool         IsFloat() { return PyFloat_CheckExact(m_ref); }
+        inline bool         IsComplex() { return PyComplex_CheckExact(m_ref); }
+        inline bool         IsBool() { return PyBool_Check(m_ref); }
+        inline bool         IsStr() { return PyUnicode_CheckExact(m_ref); }
+        inline bool         IsBytes() { return PyBytes_CheckExact(m_ref); }
+        inline bool         IsByteArray() { return PyByteArray_CheckExact(m_ref); }
+        inline bool         IsList() { return PyList_CheckExact(m_ref); }
+        inline bool         IsTuple() { return PyTuple_CheckExact(m_ref); }
+        inline bool         IsDict() { return PyDict_CheckExact(m_ref); }
+        inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
+        inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
+
         /* -------------------------------------------------------------------------- */
         /*                        Python C API Object Protocol                        */
         /* -------------------------------------------------------------------------- */
@@ -139,21 +232,21 @@ namespace Py
         // otherwise return 0. In case of an error, return -1.
         // If cls is a tuple, the check will be done against every entry in cls.
         // The result will be 1 when at least one of the checks returns 1, otherwise it will be 0.
-        int             IsSubclass(PyObject * cls) const { return PyObject_IsSubclass(m_ref, cls); }
+        int             IsSubclass(PyObject* cls) const { return PyObject_IsSubclass(m_ref, cls); }
         // Return 1 if inst is an instance of the class cls or a subclass of cls, or 0 if not.
         // On error, returns - 1 and sets an exception.
         // If cls is a tuple, the check will be done against every entry in cls.
         // The result will be 1 when at least one of the checks returns 1, otherwise it will be 0.
-        int             IsInstance(PyObject * cls) const { return PyObject_IsInstance(m_ref, cls); }
+        int             IsInstance(PyObject* cls) const { return PyObject_IsInstance(m_ref, cls); }
         // When o is non-NULL, returns a type object corresponding to the object type of object o.
         // On failure, raises SystemError and returns NULL. This is equivalent to the Python
         // expression type(o). This function increments the reference count of the return value.
         // There’s really no reason to use this function instead of the common expression
         // o->ob_type, which returns a pointer of type PyTypeObject*, except when the incremented
         // reference count is needed.
-        Object          Type() const { return FromNew(PyObject_Type(m_ref)); }
+        Object          Type() const { return PyObject_Type(m_ref); }
         // Return true if the object o is of type type or a subtype of type.Both parameters must be non - NULL.
-        bool            TypeCheck(PyTypeObject *py_type) const { return PyObject_TypeCheck(m_ref, py_type); }
+        bool            TypeCheck(PyTypeObject* py_type) const { return PyObject_TypeCheck(m_ref, py_type); }
         /* -------------------------------------------------------------------------- */
         /*              Those two who do not match any category above...              */
         /* -------------------------------------------------------------------------- */
@@ -162,10 +255,28 @@ namespace Py
         // If the argument is NULL, this is like the Python dir(), returning the names of the
         // current locals; in this case, if no execution frame is active then NULL is returned
         // but PyErr_Occurred() will return false.
-        Object          Dir() { return FromNew(PyObject_Dir(m_ref)); }
+        Object          Dir() { return PyObject_Dir(m_ref); }
         // This is equivalent to the Python expression iter(o). It returns a new iterator
         // for the object argument, or the object itself if the object is already an iterator.
         // Raises TypeError and returns NULL if the object cannot be iterated.
-        Object          Iter() { return FromNew(PyObject_GetIter(m_ref)); }
+        Object          Iter() { return PyObject_GetIter(m_ref); }
     };
+    template<typename Wrapper_T>
+    Wrapper_T FromNew(PyObject* py_new_ref) { return Wrapper_T(py_new_ref); }
+    template<typename Wrapper_T>
+    Wrapper_T FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Wrapper_T(py_weak_ref); }
 } // namespace Py
+
+
+#include "Long.hh"
+#include "Float.hh"
+#include "Complex.hh"
+#include "Bool.hh"
+#include "Str.hh"
+#include "Bytes.hh"
+#include "ByteArray.hh"
+#include "List.hh"
+#include "Tuple.hh"
+#include "Dict.hh"
+#include "Set.hh"
+#include "FrozenSet.hh"

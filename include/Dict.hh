@@ -1,14 +1,12 @@
-#include "Common.hh"
+#pragma once
+#include "Object.hh"
 
 namespace Py
 {
-    struct Dict : public __WrapperInterface
+    class Dict : public Object
     {
-        using __WrapperInterface::__WrapperInterface;
-        /// Construct Dict out of New PyObject Reference
-        static Dict         FromNew(PyObject* py_new_ref) { return Dict(py_new_ref); } // ! new reference construction
-        /// Construct Dict out of Borrowed PyObject Reference
-        static Dict         FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Dict(py_weak_ref); } // ? borrowed reference construction
+    public:
+        using Object::Object;
 
     };
 }

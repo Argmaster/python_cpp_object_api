@@ -4,12 +4,12 @@
 // construction tests
 void test_1()
 {
-    Py::Object o = Py::Object::FromNew(PyUnicode_FromString("object"));
+    Py::Object o = Py::FromNew<Py::Object>(PyUnicode_FromString("object"));
     {
         assert(o.RefC() == 1);
         Py::Object o2(o);
         assert(o.RefC() == 2);
-        Py::Object o3(Py::Object::FromOld(o));
+        Py::Object o3(Py::FromOld<Py::Object>(o));
         assert(o.RefC() == 3);
     }
     assert(o.RefC() == 1);
@@ -17,7 +17,7 @@ void test_1()
 // casting tests
 void test_2()
 {
-    Py::Object o = Py::Object::FromNew(PyUnicode_FromString("object"));
+    Py::Object o = Py::FromNew<Py::Object>(PyUnicode_FromString("object"));
     Py::Str str_o = o;
     assert(o.RefC() == 2);
     assert(str_o.RefC() == 2);
@@ -28,7 +28,7 @@ void test_2()
 // method tests
 void test_3()
 {
-    Py::Object o = Py::Object::FromNew(PyUnicode_FromString("object"));
+    Py::Object o = Py::FromNew<Py::Object>(PyUnicode_FromString("object"));
     assert(o.IsBool() == 0);
     assert(o.IsByteArray() == 0);
     assert(o.IsBytes() == 0);

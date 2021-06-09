@@ -1,40 +1,18 @@
 #pragma once
-#include "Common.hh"
-
+#include "Object.hh"
 
 namespace Py
 {
-    struct Str : public __WrapperInterface
+    class Str : public Object
     {
-        using __WrapperInterface::__WrapperInterface;
-        Str(const char* str) : __WrapperInterface(nullptr) {
+    public:
+        using Object::Object;
+        Str(const char* str) : Object(nullptr) {
             m_ref = PyUnicode_FromString(str);
         }
-        /// Construct Str out of New PyObject Reference
-        static Str FromNew(PyObject* py_new_ref) { return Str(py_new_ref); } // ! new reference construction
-        /// Construct Str out of Borrowed PyObject Reference
-        static Str FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Str(py_weak_ref); } // ? borrowed reference construction
         static Str New(std::string _string) {
-            return Str::FromNew(
-                PyUnicode_FromStringAndSize(_string.c_str(), _string.length())
-            );
+            return PyUnicode_FromStringAndSize(_string.c_str(), _string.length());
         }
-        /* -------------------------------------------------------------------------- */
-        /*                 Implicit dynamic casts among wrapper types                 */
-        /* -------------------------------------------------------------------------- */
-        operator Object ();
-        operator Long ();
-        operator Float ();
-        operator Complex ();
-        operator Bool ();
-        //operator Str ();
-        operator Bytes ();
-        operator ByteArray ();
-        operator List ();
-        operator Tuple ();
-        operator Dict ();
-        operator Set ();
-        operator FrozenSet ();
         /* -------------------------------------------------------------------------- */
         /*                         Python Unicode Object C API                        */
         /* -------------------------------------------------------------------------- */
@@ -60,7 +38,7 @@ namespace Py
             was raised by the codec.
         */
         static Str  Decode(const std::string& source, const char* encoding, const char* errors) {
-            return FromNew(PyUnicode_Decode(source.c_str(), source.length(), encoding, errors));
+            return PyUnicode_Decode(source.c_str(), source.length(), encoding, errors);
         }
         /* -------------------------------------------------------------------------- */
         /*                              String operations                             */
@@ -81,38 +59,35 @@ namespace Py
             characters are not included in the resulting strings.
         */
         List        Splitlines(int keepend = 0) const;
+        // Join a sequence of strings using the given separator and return the resulting Unicode string.
         Str         Join(Str separator, Object sequence) const;
+        /*
+            Return 1 if substr matches str[start:end] at the given tail end
+            (direction == -1 means to do a prefix match, direction == 1 a suffix match),
+            0 otherwise. Return -1 if an error occurred.
+        */
         Py_ssize_t  Tailmatch(Str substr, int direction = 1, Py_ssize_t begin = 0, Py_ssize_t end = INT64_MAX) const;
+        /*
+            Return the first position of substr in str[start:end] using the given
+            direction (direction == 1 means to do a forward search,
+            direction == -1 a backward search). The return value is the index of
+            the first match; a value of -1 indicates that no match was found, and
+            -2 indicates that an error occurred and an exception has been set.
+        */
         Py_ssize_t  Find(Str substr, int direction = 1, Py_ssize_t begin = 0, Py_ssize_t end = INT64_MAX) const;
+        // Return the number of non-overlapping occurrences of substr in str[start:end].
+        // Return - 1 if an error occurred.
         Py_ssize_t  Count(Str substr, Py_ssize_t begin = 0, Py_ssize_t end = INT64_MAX) const;
+        /*
+            Replace at most maxcount occurrences of substr in str with replstr and
+            return the resulting Unicode object. maxcount == -1 means replace all occurrences.
+        */
         Str         Replace(Str oldstr, Str newstr, Py_ssize_t maxcount = INT64_MAX) const;
-        Str         CFormat(Str format, Tuple args) const;
-        /* -------------------------------------------------------------------------- */
-        /*                                 Comparisons                                */
-        /* -------------------------------------------------------------------------- */
-        /// Less than comparison. This is the equivalent of the Python expression a < b
-        Bool            LT(Str other) const;
-        /// Less than comparison. This is the equivalent of the Python expression a < b
-        Bool            operator < (Str other) const;
-        /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        Bool            LE(Str other) const;
-        /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        Bool            operator <= (Str other) const;
-        /// Equal comparison. This is the equivalent of the Python expression a == b
-        Bool            EQ(Str other) const;
-        /// Equal comparison. This is the equivalent of the Python expression a == b
-        Bool            operator == (Str other) const;
-        /// Not equal comparison. This is the equivalent of the Python expression a != b
-        Bool            NE(Str other) const;
-        /// Not equal comparison. This is the equivalent of the Python expression a != b
-        Bool            operator != (Str other) const;
-        /// Greater than comparison. This is the equivalent of the Python expression a > b
-        Bool            GT(Str other) const;
-        /// Greater than comparison. This is the equivalent of the Python expression a > b
-        Bool            operator > (Str other) const;
-        /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        Bool            GE(Str other) const;
-        /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        Bool            operator >= (Str other) const;
+        // Return a new string object by injecting args into string; this is analogous to format % args
+        Str         CFormat(Tuple args) const;
+        // Return a new string object from format and args; this is analogous to format % args
+        static Str  CFormat(Str format, Tuple args) { return PyUnicode_Format(format, args); }
+        // Return a new string object from format and args; this is analogous to Str(format).CFormat(args)
+        Str         operator % (Tuple args) const;
     };
 }

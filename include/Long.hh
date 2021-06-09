@@ -1,19 +1,16 @@
 #pragma once
-#include "Common.hh"
+#include "Object.hh"
 
 namespace Py
 {
-    struct Long : public __WrapperInterface
+    class Long : public Object
     {
-        using __WrapperInterface::__WrapperInterface;
+    public:
+        using Object::Object;
         // Custom class constuctor from C bool to Python Bool
         static Long New(long _long) {
-            return Long::FromNew(PyLong_FromLong(_long));
+            return PyLong_FromLong(_long);
         }
-        /// Construct Long out of New PyObject Reference
-        static Long         FromNew(PyObject* py_new_ref) { return Long(py_new_ref); } // ! new reference construction
-        /// Construct Long out of Borrowed PyObject Reference
-        static Long         FromOld(PyObject* py_weak_ref) { Py_XINCREF(py_weak_ref); return Long(py_weak_ref); } // ? borrowed reference construction
 
     };
 }
