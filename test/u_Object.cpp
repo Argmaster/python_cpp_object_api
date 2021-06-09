@@ -46,8 +46,8 @@ void test_3()
         assert(o.IsTuple() == 0);
         assert(o.RefC() == 1);
     }
-    Py::Object o1 = Py::Str::New("__doc__");
-    Py::Object o2 = Py::Str::New("__ge__");
+    Py::Object o1 = Py::Str("__doc__");
+    Py::Object o2 = Py::Str("__ge__");
     {
         auto attr = o1.HasAttr(o1);
         assert(attr);
@@ -82,21 +82,21 @@ void test_3()
         PyErr_Clear();
     }
     {
-        assert(o1.LT(o2) == true);
+        assert(o1.__lt__(o2) == true);
         assert((o1 < o2) == true);
-        assert(o1.LE(o2) == true);
+        assert(o1.__le__(o2) == true);
         assert((o1 <= o2) == true);
-        assert(o1.EQ(o2) == false);
+        assert(o1.__eq__(o2) == false);
         assert((o1 == o2) == false);
-        assert(o1.EQ(o1) == true);
+        assert(o1.__eq__(o1) == true);
         assert((o1 == o1) == true);
-        assert(o1.NE(o2) == true);
+        assert(o1.__ne__(o2) == true);
         assert((o1 != o2) == true);
-        assert(o1.NE(o1) == false);
+        assert(o1.__ne__(o1) == false);
         assert((o1 != o1) == false);
-        assert(o1.GT(o2) == false);
+        assert(o1.__gt__(o2) == false);
         assert((o1 > o2) == false);
-        assert(o1.GE(o2) == false);
+        assert(o1.__ge__(o2) == false);
         assert((o1 >= o2) == false);
         assert((o1 == o2) == false);
     }

@@ -3,8 +3,8 @@
 
 void test_1()
 {
-    auto str = Py::Bytes::New("Ala");
-    __LOG(str);
+    auto str = Py::Bytes("Ala");
+    __LOG(str << std::endl);
 }
 void test_2()
 {

@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_map>
 #include <stdarg.h>
+#include <initializer_list>
 
 
 #ifdef _DEBUG
@@ -158,39 +159,39 @@ namespace Py
         virtual int             DelAttr(Str attr_name) const;
         // Return element of o corresponding to the object key or NULL on failure.
         // This is the equivalent of the Python expression o[key].
-        virtual Object          GetItem(Str attr_name) const;
+        virtual Object          GetItem(Object attr_name) const;
         // Map the object key to the value v. Raise an exception and return -1 on failure;
         // return 0 on success.This is the equivalent of the Python statement o[key] = v.
         // This function does not steal a reference to v.
-        virtual int             SetItem(Str attr_name, PyObject * value) const;
+        virtual int             SetItem(Object attr_name, PyObject * value) const;
         // Remove the mapping for the object key from the object o. Return -1 on failure.
         // This is equivalent to the Python statement del o[key].
-        virtual int             DelItem(Str attr_name) const;
+        virtual int             DelItem(Object attr_name) const;
         /* -------------------------------------------------------------------------- */
         /*                                 Comparisons                                */
         /* -------------------------------------------------------------------------- */
         /// Less than comparison. This is the equivalent of the Python expression a < b
-        Bool            LT(Object other) const;
+        Bool            __lt__(Object other) const;
         /// Less than comparison. This is the equivalent of the Python expression a < b
         Bool            operator < (Object other) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        Bool            LE(Object other) const;
+        Bool            __le__(Object other) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
         Bool            operator <= (Object other) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
-        Bool            EQ(Object other) const;
+        Bool            __eq__(Object other) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
         Bool            operator == (Object other) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
-        Bool            NE(Object other) const;
+        Bool            __ne__(Object other) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
         Bool            operator != (Object other) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
-        Bool            GT(Object other) const;
+        Bool            __gt__(Object other) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
         Bool            operator > (Object other) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        Bool            GE(Object other) const;
+        Bool            __ge__(Object other) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
         Bool            operator >= (Object other) const;
         /* -------------------------------------------------------------------------- */

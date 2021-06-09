@@ -18,8 +18,8 @@ namespace Py
     Str             Str::operator + (Str other) const { return PyUnicode_Concat(m_ref, other); }
     List            Str::Split(Str sep, Py_ssize_t maxsplit) const { return New<List>(PyUnicode_Split(m_ref, sep, maxsplit)); }
     List            Str::Splitlines(int keepend) const { return New<List>(PyUnicode_Splitlines(m_ref, keepend)); }
-    Str             Str::Join(Str separator, Object sequence) const { return PyUnicode_Join(separator, sequence); }
-    Py_ssize_t      Str::Tailmatch(Str substr, int direction, Py_ssize_t begin, Py_ssize_t end) const {
+    Str             Str::Join(Object sequence) const { return PyUnicode_Join(m_ref, sequence); }
+    Py_ssize_t      Str::Match(Str substr, int direction, Py_ssize_t begin, Py_ssize_t end) const {
         return PyUnicode_Tailmatch(m_ref, substr, begin, end, direction);
     }
     Py_ssize_t      Str::Find(Str substr, int direction, Py_ssize_t begin, Py_ssize_t end) const {

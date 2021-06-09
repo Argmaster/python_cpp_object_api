@@ -55,7 +55,7 @@ namespace Py
             will be done. If negative, no limit is set. Separators are not
             included in the resulting list.
         */
-        List        Split(Str sep, Py_ssize_t maxsplit = INT64_MAX) const;
+        List        Split(Str sep, Py_ssize_t maxsplit = PY_SSIZE_T_MAX) const;
         /*
             Split a Unicode string at line breaks, returning a list of Unicode strings.
             CRLF is considered to be one line break. If keepend is 0, the Line break
@@ -63,13 +63,13 @@ namespace Py
         */
         List        Splitlines(int keepend = 0) const;
         // Join a sequence of strings using the given separator and return the resulting Unicode string.
-        Str         Join(Str separator, Object sequence) const;
+        Str         Join(Object sequence) const;
         /*
             Return 1 if substr matches str[start:end] at the given tail end
             (direction == -1 means to do a prefix match, direction == 1 a suffix match),
             0 otherwise. Return -1 if an error occurred.
         */
-        Py_ssize_t  Tailmatch(Str substr, int direction = 1, Py_ssize_t begin = 0, Py_ssize_t end = INT64_MAX) const;
+        Py_ssize_t  Match(Str substr, int direction = -1, Py_ssize_t begin = 0, Py_ssize_t end = PY_SSIZE_T_MAX) const;
         /*
             Return the first position of substr in str[start:end] using the given
             direction (direction == 1 means to do a forward search,
@@ -77,15 +77,15 @@ namespace Py
             the first match; a value of -1 indicates that no match was found, and
             -2 indicates that an error occurred and an exception has been set.
         */
-        Py_ssize_t  Find(Str substr, int direction = 1, Py_ssize_t begin = 0, Py_ssize_t end = INT64_MAX) const;
+        Py_ssize_t  Find(Str substr, int direction = 1, Py_ssize_t begin = 0, Py_ssize_t end = PY_SSIZE_T_MAX) const;
         // Return the number of non-overlapping occurrences of substr in str[start:end].
         // Return - 1 if an error occurred.
-        Py_ssize_t  Count(Str substr, Py_ssize_t begin = 0, Py_ssize_t end = INT64_MAX) const;
+        Py_ssize_t  Count(Str substr, Py_ssize_t begin = 0, Py_ssize_t end = PY_SSIZE_T_MAX) const;
         /*
             Replace at most maxcount occurrences of substr in str with replstr and
             return the resulting Unicode object. maxcount == -1 means replace all occurrences.
         */
-        Str         Replace(Str oldstr, Str newstr, Py_ssize_t maxcount = INT64_MAX) const;
+        Str         Replace(Str oldstr, Str newstr, Py_ssize_t maxcount = PY_SSIZE_T_MAX) const;
         // Return a new string object by injecting args into string; this is analogous to format % args
         Str         CFormat(Tuple args) const;
         // Return a new string object from format and args; this is analogous to Str(format).CFormat(args)

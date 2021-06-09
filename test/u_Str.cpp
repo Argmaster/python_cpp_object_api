@@ -6,6 +6,7 @@ void test_1()
     {
         Py::Str str("Ala");
         assert(str.RefC() == 1);
+        assert(str.IsStr() == 1);
     }
     {
         auto str = Py::Str::FromFormat("Some num: %i and %lu", 1, 2);
@@ -25,7 +26,41 @@ void test_2()
 }
 void test_3()
 {
+    auto str = Py::Str("The quick brown fox \n jumps over the lazy dog");
+    {
+        auto words = str.Split(" ");
+        assert(words.Length() == 10);
+    }
+    {
+        auto words = str.Splitlines();
+        assert(words.Length() == 2);
+    }
+    {
+        auto words = Py::Str("Go hell").Split(" ");
+        auto joined = Py::Str(" to ").Join(words);
+        assert(joined == "Go to hell");
+    }
+    {
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").Match("The quick"));
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").Match("lazy dog", 1));
+    }
+    {
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").Find("The quick") == 0);
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").Find("lazy dog", -1) == 35);
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").GetItem(Py::Long(35)) == "l");
+    }
+    {
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").Count("a") == 1);
+    }
+    {
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").Replace("quick", "slow").Length() == 42);
+    }
+    {
+        assert(Py::Str("One, %i guns\nLay %s your arms\n").CFormat({ Py::Long(21), Py::Str("down") }) == "One, 21 guns\nLay down your arms\n");
+        assert((Py::Str("One, %i guns\nLay %s your arms\n") % Py::Tuple({ Py::Long(21), Py::Str("down") })) == "One, 21 guns\nLay down your arms\n");
+    }
 }
+
 
 int main(int argc, char* argv[], char* env[])
 {
