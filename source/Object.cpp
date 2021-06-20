@@ -3,6 +3,24 @@
 
 namespace Py
 {
+    Object::Object() : m_ref(nullptr) {
+        __LOG("Object FromNew!");
+    }
+    Object::Object(PyObject* py_object)
+        : m_ref(py_object) {
+        __LOG("Object FromNew!");
+    }
+    Object::Object(const Object& moved_object)
+        : m_ref(moved_object.m_ref) {
+        Py_XINCREF(moved_object.m_ref);
+        __LOG("Object Copied!");
+    }
+    Object::Object(Object&& moved_object)
+        : m_ref(moved_object.m_ref) {
+        moved_object.m_ref = nullptr;
+        //Py_XINCREF(moved_object.m_ref);
+        __LOG("Object Moved!");
+    }
     /* -------------------------------------------------------------------------- */
     /*                 Implicit dynamic casts among wrapper types                 */
     /* -------------------------------------------------------------------------- */

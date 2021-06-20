@@ -46,29 +46,15 @@ namespace Py
     protected:
         // Actuall underlying PyObject, which refcount will be controled
         PyObject* m_ref = nullptr;
-        // default constructor for internal usage
-        Object() : m_ref(nullptr) {
-            __LOG("Object FromNew!");
-        }
+        // default constructor for internal usage, initialize m_ref with nullptr
+        Object();
         /// Assume that pointer given is a new reference
-        Object(PyObject* py_object)
-            : m_ref(py_object) {
-            __LOG("Object FromNew!");
-        }
+        Object(PyObject* py_object);
     public:
         /// Copies reference contained by Object, refcount is incremented
-        Object(const Object& moved_object)
-            : m_ref(moved_object.m_ref) {
-            Py_XINCREF(moved_object.m_ref);
-            __LOG("Object Copied!");
-        }
+        Object(const Object& moved_object);
         /// Moves reference contained by Object, refcount is not incremented
-        Object(Object&& moved_object)
-            : m_ref(moved_object.m_ref) {
-            moved_object.m_ref = nullptr;
-            //Py_XINCREF(moved_object.m_ref);
-            __LOG("Object Moved!");
-        }
+        Object(Object&& moved_object);
         /// When dies always decrefs underlying PyObject pointer (null-safe)
         virtual ~Object() {
 #ifdef _DEBUG
