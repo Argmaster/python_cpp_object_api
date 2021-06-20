@@ -7,20 +7,22 @@ namespace Py
     {
     public:
         using Object::Object;
-        Str(const char* str) : Object(nullptr) {
-            m_ref = PyUnicode_FromString(str);
-        }
+        Str(const std::string& str)
+            : Object(PyUnicode_FromStringAndSize(str.c_str(), str.length())) {}
+        Str(const char* str)
+            : Object(PyUnicode_FromString(str)) {}
         template<typename... Args>
         static Str FromFormat(const std::string& _format, Args... args) {
             return PyUnicode_FromFormat(_format.c_str(), args...);
         }
+        operator char*() { return PyBytes_AsString(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                         Python Unicode Object C API                        */
         /* -------------------------------------------------------------------------- */
         /* -------------------------------------------------------------------------- */
         /*                         String encoding operations                         */
         /* -------------------------------------------------------------------------- */
-        // Return a pointer to the UTF-8 encoding of the Unicode object.
+        // Return a string containing UTF-8 encoded content of the Unicode object.
         // The returned buffer always has an extra null byte appended(not included in size),
         // regardless of whether there are any other null code points.
         std::string AsUTF8() const;
@@ -91,4 +93,5 @@ namespace Py
         // Return a new string object from format and args; this is analogous to Str(format).CFormat(args)
         Str         operator % (Tuple args) const;
     };
+    Bool            operator == (const Str& self, const char* other);
 }

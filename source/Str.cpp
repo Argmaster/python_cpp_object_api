@@ -37,4 +37,5 @@ namespace Py
     Str             Str::operator % (Tuple args) const {
         return PyUnicode_Format(m_ref, args);
     }
+    Bool            operator == (const Str& self, const char* other) { return self.AsUTF8() == other; }
 }

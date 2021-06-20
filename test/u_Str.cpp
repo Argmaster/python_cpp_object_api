@@ -18,7 +18,7 @@ void test_2()
 {
     auto str = Py::Str("Ala");
     auto bytes = str.Encode("utf-8");
-    assert(str.AsUTF8() == std::string("Ala"));
+    assert(str == "Ala");
     auto str_2 = Py::Str::Decode("some encoded source", "ascii");
     auto bytes_2 = str_2.Encode("ascii");
     assert(str_2.AsUTF8() == std::string("some encoded source"));

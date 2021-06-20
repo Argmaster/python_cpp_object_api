@@ -197,6 +197,14 @@ namespace Py
         /* -------------------------------------------------------------------------- */
         /*                       Type operations and conversions                      */
         /* -------------------------------------------------------------------------- */
+        // Increment reference count of underlying PyObject
+        Object          INCREF() const { Py_XINCREF(m_ref); return *this; };
+        // Increment reference count of underlying PyObject
+        Object          operator ++ () const { Py_XINCREF(m_ref); return *this; };
+        // Decrement reference count of underlying PyObject
+        Object          DECREF() const { Py_XDECREF(m_ref); return *this; };
+        // Decrement reference count of underlying PyObject
+        Object          operator -- () const { Py_XDECREF(m_ref); return *this; };
         // Compute a string representation of object o. Returns the string
         // representation on success, NULL on failure.This is the equivalent of the
         // Python expression repr(o).Called by the repr() built - in function.

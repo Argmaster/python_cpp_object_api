@@ -32,5 +32,4 @@ add_test("Py::Str methods" Unit_Str "3")
 
 add_executable(Unit_Bytes ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Bytes.cpp)
 add_test("Py::Bytes construction" Unit_Bytes "1")
-add_test("Py::Bytes casts" Unit_Bytes "2")
-add_test("Py::Bytes methods" Unit_Bytes "3")
+add_test("Py::Bytes methods" Unit_Bytes "2")
