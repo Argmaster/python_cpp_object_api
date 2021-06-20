@@ -4,11 +4,11 @@
 namespace Py
 {
     Object::Object() : m_ref(nullptr) {
-        __LOG("Object FromNew!");
+        __LOG("Object New!");
     }
     Object::Object(PyObject* py_object)
         : m_ref(py_object) {
-        __LOG("Object FromNew!");
+        __LOG("Object From!");
     }
     Object::Object(const Object& moved_object)
         : m_ref(moved_object.m_ref) {
@@ -99,6 +99,18 @@ namespace Py
         return os << py_object.ReprCStr();
         //return os << "Py[" << py_object.GetRef()->ob_type->tp_name << "](" << py_object.ReprCStr() << ')';
     }
+    Bool operator == (const Bool& self, const Bool& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const ByteArray& self, const ByteArray& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Bytes& self, const Bytes& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Complex& self, const Complex& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Dict& self, const Dict& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Float& self, const Float& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const FrozenSet& self, const FrozenSet& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const List& self, const List& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Long& self, const Long& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Set& self, const Set& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Str& self, const Str& other) { return self.As<Object>() == other.As<Object>(); }
+    Bool operator == (const Tuple& self, const Tuple& other) { return self.As<Object>() == other.As<Object>(); }
 
 }
 

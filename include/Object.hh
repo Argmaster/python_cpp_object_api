@@ -97,7 +97,7 @@ namespace Py
         operator Set ();
         operator FrozenSet ();
         template<class cast_type>
-        cast_type           As() { return Old<cast_type>(m_ref); }
+        cast_type           As() const { return Old<cast_type>(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                            Type checks shortcuts                           */
         /* -------------------------------------------------------------------------- */
@@ -187,10 +187,14 @@ namespace Py
         Object          INCREF() const { Py_XINCREF(m_ref); return *this; };
         // Increment reference count of underlying PyObject
         Object          operator ++ () const { Py_XINCREF(m_ref); return *this; };
+        // Increment reference count of underlying PyObject
+        Object          operator ++ (int) const { Py_XINCREF(m_ref); return *this; };
         // Decrement reference count of underlying PyObject
         Object          DECREF() const { Py_XDECREF(m_ref); return *this; };
         // Decrement reference count of underlying PyObject
         Object          operator -- () const { Py_XDECREF(m_ref); return *this; };
+        // Decrement reference count of underlying PyObject
+        Object          operator -- (int) const { Py_XDECREF(m_ref); return *this; };
         // Compute a string representation of object o. Returns the string
         // representation on success, NULL on failure.This is the equivalent of the
         // Python expression repr(o).Called by the repr() built - in function.
@@ -224,11 +228,11 @@ namespace Py
         // Return the length of object o. If the object o provides either the
         // sequence and mapping protocols, the sequence length is returned.
         //On error, -1 is returned.This is the equivalent to the Python expression len(o).
-        Py_ssize_t      Size() const;
+        virtual Py_ssize_t Size() const;
         // Return the length of object o. If the object o provides either the
         // sequence and mapping protocols, the sequence length is returned.
         //On error, -1 is returned.This is the equivalent to the Python expression len(o).
-        Py_ssize_t      Length() const;
+        virtual Py_ssize_t Length() const;
         /* -------------------------------------------------------------------------- */
         /*                           Type checks and friends                          */
         /* -------------------------------------------------------------------------- */
@@ -277,6 +281,18 @@ namespace Py
         Py_XINCREF(py_weak_ref);
         return Wrapper_T(py_weak_ref);
     }
+    Bool operator == (const Bool& self, const Bool& other);
+    Bool operator == (const ByteArray& self, const ByteArray& other);
+    Bool operator == (const Bytes& self, const Bytes& other);
+    Bool operator == (const Complex& self, const Complex& other);
+    Bool operator == (const Dict& self, const Dict& other);
+    Bool operator == (const Float& self, const Float& other);
+    Bool operator == (const FrozenSet& self, const FrozenSet& other);
+    Bool operator == (const List& self, const List& other);
+    Bool operator == (const Long& self, const Long& other);
+    Bool operator == (const Set& self, const Set& other);
+    Bool operator == (const Str& self, const Str& other);
+    Bool operator == (const Tuple& self, const Tuple& other);
 } // namespace Py
 
 

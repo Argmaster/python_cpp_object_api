@@ -33,3 +33,7 @@ add_test("Py::Str methods" Unit_Str "3")
 add_executable(Unit_Bytes ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Bytes.cpp)
 add_test("Py::Bytes construction" Unit_Bytes "1")
 add_test("Py::Bytes methods" Unit_Bytes "2")
+
+add_executable(Unit_Tuple ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Tuple.cpp)
+add_test("Py::Tuple construction" Unit_Tuple "1")
+add_test("Py::Tuple methods" Unit_Tuple "2")
