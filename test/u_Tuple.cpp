@@ -3,8 +3,8 @@
 
 void test_1()
 {
-        auto tuple = Py::Tuple({ Py::Str("Ala"), Py::Long(11), Py::Long(-2434), Py::Float(0.3333) });
-        assert(tuple.ToStr() == "('Ala', 11, -2434, 0.3333)");
+    auto tuple = Py::Tuple({ Py::Str("Ala"), Py::Long(11), Py::Long(-2434), Py::Float(0.3333) });
+    assert(tuple.ToStr() == "('Ala', 11, -2434, 0.3333)");
 }
 void test_2()
 {
@@ -16,6 +16,11 @@ void test_2()
     assert(tuple.GetItem(3).ToStr() == "Cat");
     assert(tuple.Length() == 4);
     assert(tuple.Size() == 4);
+    int i = 0;
+    for (auto e : tuple) {
+        assert(e == tuple.GetItem(i));
+        i++;
+    }
 }
 
 int main(int argc, char* argv[], char* env[])
