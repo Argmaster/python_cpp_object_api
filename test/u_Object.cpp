@@ -18,7 +18,7 @@ void test_1()
 void test_2()
 {
     Py::Object o = Py::New<Py::Object>(PyUnicode_FromString("object"));
-    Py::Str str_o = o;
+    Py::Str str_o = Py::Old<Py::Str>(o);
     assert(o.RefC() == 2);
     assert(str_o.RefC() == 2);
     Py::Str str_o2 = o.As<Py::Str>();
@@ -46,8 +46,8 @@ void test_3()
         assert(o.IsTuple() == 0);
         assert(o.RefC() == 1);
     }
-    Py::Object o1 = Py::Str("__doc__");
-    Py::Object o2 = Py::Str("__ge__");
+    auto o1 = Py::Str("__doc__");
+    auto o2 = Py::Str("greater_equal");
     {
         auto attr = o1.HasAttr(o1);
         assert(attr);
@@ -82,23 +82,23 @@ void test_3()
         PyErr_Clear();
     }
     {
-        assert(o1.__lt__(o2) == true);
-        assert((o1 < o2) == true);
-        assert(o1.__le__(o2) == true);
-        assert((o1 <= o2) == true);
-        assert(o1.__eq__(o2) == false);
-        assert((o1 == o2) == false);
-        assert(o1.__eq__(o1) == true);
-        assert((o1 == o1) == true);
-        assert(o1.__ne__(o2) == true);
-        assert((o1 != o2) == true);
-        assert(o1.__ne__(o1) == false);
-        assert((o1 != o1) == false);
-        assert(o1.__gt__(o2) == false);
-        assert((o1 > o2) == false);
-        assert(o1.__ge__(o2) == false);
-        assert((o1 >= o2) == false);
-        assert((o1 == o2) == false);
+        assert(o1.less_than(o2) == 1);
+        assert((o1 < o2) == 1);
+        assert(o1.less_equal(o2) == 1);
+        assert((o1 <= o2) == 1);
+        assert(o1.equals(o2) == 0);
+        assert((o1 == o2) == 0);
+        assert(o1.equals(o1) == 1);
+        assert((o1 == o1) == 1);
+        assert(o1.not_equals(o2) == 1);
+        assert((o1 != o2) == 1);
+        assert(o1.not_equals(o1) == 0);
+        assert((o1 != o1) == 0);
+        assert(o1.greater_than(o2) == 0);
+        assert((o1 > o2) == 0);
+        assert(o1.greater_equal(o2) == 0);
+        assert((o1 >= o2) == 0);
+        assert((o1 == o2) == 0);
     }
     {
         assert(o1.Repr().IsNotNull());

@@ -47,7 +47,7 @@ void test_3()
     {
         assert(Py::Str("The quick brown fox jumps over the lazy dog").Find("The quick") == 0);
         assert(Py::Str("The quick brown fox jumps over the lazy dog").Find("lazy dog", -1) == 35);
-        assert(Py::Str("The quick brown fox jumps over the lazy dog").GetItem(Py::Long(35)) == "l");
+        assert(Py::Str("The quick brown fox jumps over the lazy dog").GetItem(Py::Long(35)).As<Py::Str>() == "l");
     }
     {
         assert(Py::Str("The quick brown fox jumps over the lazy dog").Count("a") == 1);

@@ -11,9 +11,6 @@ namespace Py
         Bool(bool _bool) {
             m_ref = PyBool_FromLong(_bool);
         }
-        friend bool operator == (bool first, Bool second) { return first == bool(second); }
-        friend bool operator != (bool first, Bool second) { return first != bool(second); }
-        friend bool operator == (Bool first, bool second) { return bool(first) == second; }
-        friend bool operator != (Bool first, bool second) { return bool(first) != second; }
+        operator bool() { return IsTrue(); }
     };
 }

@@ -37,3 +37,7 @@ add_test("Py::Bytes methods" Unit_Bytes "2")
 add_executable(Unit_Tuple ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Tuple.cpp)
 add_test("Py::Tuple construction" Unit_Tuple "1")
 add_test("Py::Tuple methods" Unit_Tuple "2")
+
+add_executable(Unit_Dict ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Dict.cpp)
+add_test("Py::Dict construction" Unit_Dict "1")
+add_test("Py::Dict methods" Unit_Dict "2")

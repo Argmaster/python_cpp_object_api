@@ -7,7 +7,7 @@ namespace Py
     {
     public:
         using Object::Object;
-        Str(const std::string& str)
+        Str(std::string str)
             : Object(PyUnicode_FromStringAndSize(str.c_str(), str.length())) {}
         Str(const char* str)
             : Object(PyUnicode_FromString(str)) {}
@@ -15,7 +15,6 @@ namespace Py
         static Str FromFormat(const std::string& _format, Args... args) {
             return PyUnicode_FromFormat(_format.c_str(), args...);
         }
-        operator char*() { return PyBytes_AsString(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                         Python Unicode Object C API                        */
         /* -------------------------------------------------------------------------- */
@@ -80,18 +79,24 @@ namespace Py
             -2 indicates that an error occurred and an exception has been set.
         */
         Py_ssize_t  Find(Str substr, int direction = 1, Py_ssize_t begin = 0, Py_ssize_t end = PY_SSIZE_T_MAX) const;
-        // Return the number of non-overlapping occurrences of substr in str[start:end].
-        // Return - 1 if an error occurred.
+        /*
+            Return the number of non-overlapping occurrences of substr in str[start:end].
+            Return - 1 if an error occurred.
+        */
         Py_ssize_t  Count(Str substr, Py_ssize_t begin = 0, Py_ssize_t end = PY_SSIZE_T_MAX) const;
         /*
             Replace at most maxcount occurrences of substr in str with replstr and
             return the resulting Unicode object. maxcount == -1 means replace all occurrences.
         */
         Str         Replace(Str oldstr, Str newstr, Py_ssize_t maxcount = PY_SSIZE_T_MAX) const;
-        // Return a new string object by injecting args into string; this is analogous to format % args
+        /*
+            Return a new string object by injecting args into string; this is analogous to format % args
+        */
         Str         CFormat(Tuple args) const;
-        // Return a new string object from format and args; this is analogous to Str(format).CFormat(args)
+        /*
+            Return a new string object from format and args; this is analogous to Str(format).CFormat(args)
+        */
         Str         operator % (Tuple args) const;
     };
-    Bool            operator == (const Str& self, const char* other);
+    int             operator == (const Str& self, const char* other);
 }
