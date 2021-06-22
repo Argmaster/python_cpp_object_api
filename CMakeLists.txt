@@ -49,3 +49,7 @@ add_test("Py::Dict methods" Unit_Dict "2")
 add_executable(Unit_Module ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Module.cpp)
 add_test("Py::Module construction" Unit_Dict "1")
 add_test("Py::Module methods" Unit_Dict "2")
+
+add_executable(Unit_Function ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Function.cpp)
+add_test("Py::Function construction" Unit_Function "1")
+add_test("Py::Function methods" Unit_Function "2")

@@ -365,12 +365,12 @@ namespace Py
         */
         Object          Iter() { return PyObject_GetIter(m_ref); }
         /**
-            @brief Call object as if it was a function, with given args and kwargs
+            @brief Call object as if it was a function, with given args (can't be NULL) and kwargs
                 Return the result of the call on success, or raise an exception and return NULL on failure.
         */
         Object          Call(Tuple args, Dict kwargs);
         /**
-            @brief Call method of this object retreived via name, with given args and kwargs
+            @brief Call method of this object retreived via name, with given args (can't be NULL) and kwargs
                 Return the result of the call on success, or raise an exception and return NULL on failure.
         */
         Object          Call(std::string name, Tuple args, Dict kwargs);

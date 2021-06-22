@@ -1,19 +1,12 @@
-#include "Module.hh"
+#include "Function.hh"
 #include <assert.h>
 
 void test_1()
 {
-    auto json = Py::Module::Import("json");
-    assert(json.Symbols().Length() == 26);
-    assert(json.RefC() == 2);
-    auto json2 = Py::Module::Import("json");
-    assert(json2.RefC() == 3);
-    assert(json.RefC() == 3);
+    auto func = Py::Function(nullptr);
 }
 void test_2()
 {
-    auto json = Py::Module::Import("json");
-    __LOG(json.Call("dumps", {Py::Dict({{"Key", Py::Float(0.333)}})}, nullptr))
 }
 
 int main(int argc, char* argv[], char* env[])
