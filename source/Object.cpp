@@ -48,18 +48,52 @@ namespace Py
     /* -------------------------------------------------------------------------- */
     /*                                 Comparisons                                */
     /* -------------------------------------------------------------------------- */
-    int             Object::less_than(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_LT)); }
+    int             Object::LessThan(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_LT)); }
     int             Object::operator < (Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_LT)); }
-    int             Object::less_equal(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_LE)); }
+    int             Object::LessEqual(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_LE)); }
     int             Object::operator <= (Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_LE)); }
-    int             Object::equals(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_EQ)); }
+    int             Object::Equals(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_EQ)); }
     int             Object::operator == (Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_EQ)); }
-    int             Object::not_equals(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_NE)); }
+    int             Object::NotEquals(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_NE)); }
     int             Object::operator != (Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_NE)); }
-    int             Object::greater_than(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_GT)); }
+    int             Object::GreaterThan(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_GT)); }
     int             Object::operator > (Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_GT)); }
-    int             Object::greater_equal(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_GE)); }
+    int             Object::GreaterEqual(Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_GE)); }
     int             Object::operator >= (Object other) const { return PyObject_IsTrue(PyObject_RichCompare(m_ref, other, Py_GE)); }
+    /* -------------------------------------------------------------------------- */
+    /*                             Numerical operators                            */
+    /* -------------------------------------------------------------------------- */
+    Object          Object::Add(Object other) const { return PyNumber_Add(m_ref, other); }
+    Object          Object::operator + (Object other) const { return PyNumber_Add(m_ref, other); }
+    Object          Object::Sub(Object other) const { return PyNumber_Subtract(m_ref, other); }
+    Object          Object::operator - (Object other) const { return PyNumber_Subtract(m_ref, other); }
+    Object          Object::Mul(Object other) const { return PyNumber_Multiply(m_ref, other); }
+    Object          Object::operator * (Object other) const { return PyNumber_Multiply(m_ref, other); }
+    Object          Object::MatMul(Object other) const { return PyNumber_MatrixMultiply(m_ref, other); }
+    Object          Object::FloorDiv(Object other) const { return PyNumber_FloorDivide(m_ref, other); }
+    Object          Object::TrueDiv(Object other) const { return PyNumber_TrueDivide(m_ref, other); }
+    Object          Object::operator / (Object other) const { return PyNumber_TrueDivide(m_ref, other); }
+    Object          Object::Mod(Object other) const { return PyNumber_Remainder(m_ref, other); }
+    Object          Object::operator %(Object other) const { return PyNumber_Remainder(m_ref, other); }
+    Object          Object::DivMod(Object other) const { return PyNumber_Divmod(m_ref, other); }
+    Object          Object::Pow(Object other) const { return PyNumber_Power(m_ref, other, Py_None); }
+    Object          Object::Neg() const { return PyNumber_Negative(m_ref); }
+    Object          Object::operator - () const { return PyNumber_Negative(m_ref); }
+    Object          Object::Pos() const { return PyNumber_Positive(m_ref); }
+    Object          Object::operator + () const { return PyNumber_Positive(m_ref); }
+    Object          Object::Abs() const { return PyNumber_Absolute(m_ref); }
+    Object          Object::Inv() const { return PyNumber_Invert(m_ref); }
+    Object          Object::operator ~ () const { return PyNumber_Invert(m_ref); }
+    Object          Object::LShift(Object other) const { return PyNumber_Lshift(m_ref, other); }
+    Object          Object::operator << (Object other) const { return PyNumber_Lshift(m_ref, other); }
+    Object          Object::RShift(Object other) const { return PyNumber_Rshift(m_ref, other); }
+    Object          Object::operator >> (Object other) const { return PyNumber_Rshift(m_ref, other); }
+    Object          Object::And(Object other) const { return PyNumber_And(m_ref, other); }
+    Object          Object::operator & (Object other) const { return PyNumber_And(m_ref, other); }
+    Object          Object::Or(Object other) const { return PyNumber_Or(m_ref, other); }
+    Object          Object::operator | (Object other) const { return PyNumber_Or(m_ref, other); }
+    Object          Object::Xor(Object other) const { return PyNumber_Xor(m_ref, other); }
+    Object          Object::operator ^ (Object other) const { return PyNumber_Xor(m_ref, other); }
     /* -------------------------------------------------------------------------- */
     /*                          Common object operations                          */
     /* -------------------------------------------------------------------------- */

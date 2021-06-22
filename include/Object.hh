@@ -48,29 +48,23 @@ namespace Py
     {
     protected:
         /*
-            Actuall underlying PyObject, which refcount will be controled
-        */
+            Actuall underlying PyObject, which refcount will be controled */
         PyObject* m_ref = nullptr;
         /*
-            default constructor for internal usage, initialize m_ref with nullptr
-        */
+            default constructor for internal usage, initialize m_ref with nullptr */
         Object();
         /*
-            Create new object with reference to new PyObject (steal reference)
-        */
+            Create new object with reference to new PyObject (steal reference) */
         Object(PyObject* py_object);
     public:
         /*
-            Copies reference contained by Object, refcount is incremented
-        */
+            Copies reference contained by Object, refcount is incremented */
         Object(const Object& moved_object);
         /**
-            @brief Moves reference contained by Object, refcount is not incremented
-        */
+            @brief Moves reference contained by Object, refcount is not incremented */
         Object(Object&& moved_object);
         /**
-            @brief When dies always decrefs underlying PyObject pointer (null-safe)
-        */
+            @brief When dies always decrefs underlying PyObject pointer (null-safe) */
         virtual ~Object() {
 #ifdef _DEBUG
             if (IsNotNull())
@@ -79,58 +73,45 @@ namespace Py
             Py_XDECREF(m_ref);
         }
         /**
-            @brief Construct Wrapper_T out of New PyObject Reference
-        */
+            @brief Construct Wrapper_T out of New PyObject Reference */
         template<typename Wrapper_T>
         friend Wrapper_T New(PyObject* py_new_ref);
         /**
-            @brief Construct Wrapper_T out of Borrowed PyObject Reference
-        */
+            @brief Construct Wrapper_T out of Borrowed PyObject Reference */
         template<typename Wrapper_T>
         friend Wrapper_T Old(PyObject* py_weak_ref);
         /**
-            @brief stream out operator overload
-        */
+            @brief stream out operator overload */
         friend std::ostream& operator << (std::ostream& os, Object py_object);
         /**
-            @brief Explicit shortcut for null test
-        */
+            @brief Explicit shortcut for null test */
         inline bool         IsNull() const { return m_ref == NULL; }
         /**
-            @brief  Expilcit shortcut for not null test
-        */
+            @brief  Expilcit shortcut for not null test */
         inline bool         IsNotNull() const { return m_ref != NULL; }
         /**
-            @brief  Acquire reference count of underlying PyObject
-        */
+            @brief  Acquire reference count of underlying PyObject */
         inline Py_ssize_t   RefC() const { return Py_REFCNT(m_ref); }
         /**
-            @brief Acquire PyObject contained in this Object
-        */
+            @brief Acquire PyObject contained in this Object */
         inline PyObject*    GetRef() const { return m_ref; }
         /**
-            @brief Increment reference count of underlying PyObject
-        */
+            @brief Increment reference count of underlying PyObject */
         Object          INCREF() const { Py_XINCREF(m_ref); return *this; };
         /**
-            @brief Increment reference count of underlying PyObject
-        */
+            @brief Increment reference count of underlying PyObject */
         Object          operator ++ () const { Py_XINCREF(m_ref); return *this; };
         /**
-            @brief Increment reference count of underlying PyObject
-        */
+            @brief Increment reference count of underlying PyObject */
         Object          operator ++ (int) const { Py_XINCREF(m_ref); return *this; };
         /**
-            @brief Decrement reference count of underlying PyObject
-        */
+            @brief Decrement reference count of underlying PyObject */
         Object          DECREF() const { Py_XDECREF(m_ref); return *this; };
         /**
-            @brief Decrement reference count of underlying PyObject
-        */
+            @brief Decrement reference count of underlying PyObject */
         Object          operator -- () const { Py_XDECREF(m_ref); return *this; };
         /**
-            @brief Decrement reference count of underlying PyObject
-        */
+            @brief Decrement reference count of underlying PyObject */
         Object          operator -- (int) const { Py_XDECREF(m_ref); return *this; };
         /* -------------------------------------------------------------------------- */
         /*                 Implicit dynamic casts among wrapper types                 */
@@ -147,13 +128,16 @@ namespace Py
         inline bool         IsLong() { return PyLong_CheckExact(m_ref); }
         inline bool         IsFloat() { return PyFloat_CheckExact(m_ref); }
         inline bool         IsComplex() { return PyComplex_CheckExact(m_ref); }
+        inline bool         IsNumber() { return PyNumber_Check(m_ref); }
         inline bool         IsBool() { return PyBool_Check(m_ref); }
         inline bool         IsStr() { return PyUnicode_CheckExact(m_ref); }
         inline bool         IsBytes() { return PyBytes_CheckExact(m_ref); }
         inline bool         IsByteArray() { return PyByteArray_CheckExact(m_ref); }
         inline bool         IsList() { return PyList_CheckExact(m_ref); }
         inline bool         IsTuple() { return PyTuple_CheckExact(m_ref); }
+        inline bool         IsSequence() { return PySequence_Check(m_ref); }
         inline bool         IsDict() { return PyDict_CheckExact(m_ref); }
+        inline bool         IsMapping() { return PyMapping_Check(m_ref); }
         inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
         inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
 
@@ -213,29 +197,99 @@ namespace Py
         /*                                 Comparisons                                */
         /* -------------------------------------------------------------------------- */
         /// Less than comparison. This is the equivalent of the Python expression a < b
-        int             less_than(Object other) const;
+        int             LessThan(Object other) const;
         /// Less than comparison. This is the equivalent of the Python expression a < b
         int             operator < (Object other) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        int             less_equal(Object other) const;
+        int             LessEqual(Object other) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
         int             operator <= (Object other) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
-        int             equals(Object other) const;
+        int             Equals(Object other) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
         int             operator == (Object other) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
-        int             not_equals(Object other) const;
+        int             NotEquals(Object other) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
         int             operator != (Object other) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
-        int             greater_than(Object other) const;
+        int             GreaterThan(Object other) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
         int             operator > (Object other) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        int             greater_equal(Object other) const;
+        int             GreaterEqual(Object other) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
         int             operator >= (Object other) const;
+        /* -------------------------------------------------------------------------- */
+        /*                             Numerical operators                            */
+        /* -------------------------------------------------------------------------- */
+        /// Returns the result of adding o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 + o2
+        Object          Add(Object other) const;
+        /// Returns the result of adding o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 + o2
+        Object          operator + (Object other) const;
+        /// Returns the result of subtracting o2 from o1, or NULL on failure. This is the equivalent of the Python expression o1 - o2.
+        Object          Sub(Object other) const;
+        /// Returns the result of subtracting o2 from o1, or NULL on failure. This is the equivalent of the Python expression o1 - o2.
+        Object          operator - (Object other) const;
+        /// Returns the result of multiplying o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 * o2.
+        Object          Mul(Object other) const;
+        /// Returns the result of multiplying o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 * o2.
+        Object          operator * (Object other) const;
+        /// Returns the result of matrix multiplication on o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 @ o2.
+        Object          MatMul(Object other) const;
+        /// Return the floor of o1 divided by o2, or NULL on failure. This is equivalent to the “classic” division of integers
+        Object          FloorDiv(Object other) const;
+        /**
+            @brief Return a reasonable approximation for the mathematical value of o1 divided by o2,
+            or NULL on failure. The return value is “approximate” because binary floating point
+            numbers are approximate; it is not possible to represent all real numbers in base two.
+            This function can return a floating point value when passed two integers.
+        */
+        Object          TrueDiv(Object other) const;
+        /// Shortcut for TrueDiv
+        Object          operator / (Object other) const;
+        /// Returns the remainder of dividing o1 by o2, or NULL on failure. This is the equivalent of the Python expression o1 % o2.
+        Object          Mod(Object other) const;
+        /// Returns the remainder of dividing o1 by o2, or NULL on failure. This is the equivalent of the Python expression o1 % o2.
+        Object          operator % (Object other) const;
+        /// See the built-in function divmod(). Returns NULL on failure. This is the equivalent of the Python expression divmod(o1, o2).
+        Object          DivMod(Object other) const;
+        /// This is the equivalent of the Python expression o1 ** o2.
+        Object          Pow(Object other) const;
+        /// Returns the negation of o on success, or NULL on failure. This is the equivalent of the Python expression -o.
+        Object          Neg() const;
+        /// Returns the negation of o on success, or NULL on failure. This is the equivalent of the Python expression -o.
+        Object          operator - () const;
+        /// Returns o on success, or NULL on failure. This is the equivalent of the Python expression +o.
+        Object          Pos() const;
+        /// Returns o on success, or NULL on failure. This is the equivalent of the Python expression +o.
+        Object          operator + () const;
+        /// Returns the absolute value of o, or NULL on failure. This is the equivalent of the Python expression abs(o).
+        Object          Abs() const;
+        /// Returns the bitwise negation of o on success, or NULL on failure. This is the equivalent of the Python expression ~o
+        Object          Inv() const;
+        /// Returns the bitwise negation of o on success, or NULL on failure. This is the equivalent of the Python expression ~o
+        Object          operator ~ () const;
+        /// Returns the result of left shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 << o2.
+        Object          LShift(Object other) const;
+        /// Returns the result of left shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 << o2.
+        Object          operator << (Object other) const;
+        /// Returns the result of right shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 >> o2.
+        Object          RShift(Object other) const;
+        /// Returns the result of right shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 >> o2.
+        Object          operator >>(Object other) const;
+        /// Returns the “bitwise and” of o1 and o2 on success and NULL on failure. This is the equivalent of the Python expression o1 & o2.
+        Object          And(Object other) const;
+        /// Returns the “bitwise and” of o1 and o2 on success and NULL on failure. This is the equivalent of the Python expression o1 & o2.
+        Object          operator & (Object other) const;
+        /// Returns the “bitwise or” of o1 and o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 | o2.
+        Object          Or(Object other) const;
+        /// Returns the “bitwise or” of o1 and o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 | o2.
+        Object          operator | (Object other) const;
+        /// Returns the “bitwise exclusive or” of o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 ^ o2.
+        Object          Xor(Object other) const;
+        /// Returns the “bitwise exclusive or” of o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 ^ o2.
+        Object          operator ^ (Object other) const;
         /* -------------------------------------------------------------------------- */
         /*                       Type operations and conversions                      */
         /* -------------------------------------------------------------------------- */

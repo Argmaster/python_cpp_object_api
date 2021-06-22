@@ -8,6 +8,7 @@ void test_1()
 }
 void test_2()
 {
+
     auto ll = Py::Long(-2434);
     auto list = Py::List({ Py::Str("Ala"), Py::Long(11), ll, Py::Float(0.3333) });
     assert(ll.RefC() == 2);
@@ -30,6 +31,10 @@ void test_2()
         assert(e == list.GetItem(i));
         i++;
     }
+    Py::List list1 = Py::List({ Py::Str("Ala") });
+    Py::List list2 = Py::List({ Py::Long(11), Py::Float(0.3333) });
+    Py::List list3 = list1.Add(list2).As<Py::List>();
+    assert(list3.Length() == 3);
 }
 
 int main(int argc, char* argv[], char* env[])

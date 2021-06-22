@@ -3,7 +3,8 @@
 
 namespace Py
 {
-    List::List(std::initializer_list<Object> _elements) : Object(PyList_New(_elements.size())) {
+    List::List(std::initializer_list<Object> _elements)
+        : Object(PyList_New(_elements.size())) {
         Py_ssize_t i = 0;
         for (auto e : _elements) {
             PyList_SetItem(m_ref, i, e++);
@@ -17,7 +18,7 @@ namespace Py
         return Old<Object>(PyList_GetItem(m_ref, index));
     }
     int     List::SetItem(Py_ssize_t index, Object value) const {
-        return PyList_SetItem(m_ref, index, value);
+        return PyList_SetItem(m_ref, index, value++);
     }
     List    List::GetSlice(Py_ssize_t begin, Py_ssize_t end) const {
         return New<List>(PyList_GetSlice(m_ref, begin, end));

@@ -47,7 +47,7 @@ void test_3()
         assert(o.RefC() == 1);
     }
     auto o1 = Py::Str("__doc__");
-    auto o2 = Py::Str("greater_equal");
+    auto o2 = Py::Str("__ge__");
     {
         auto attr = o1.HasAttr(o1);
         assert(attr);
@@ -82,21 +82,21 @@ void test_3()
         PyErr_Clear();
     }
     {
-        assert(o1.less_than(o2) == 1);
+        assert(o1.LessThan(o2) == 1);
         assert((o1 < o2) == 1);
-        assert(o1.less_equal(o2) == 1);
+        assert(o1.LessEqual(o2) == 1);
         assert((o1 <= o2) == 1);
-        assert(o1.equals(o2) == 0);
+        assert(o1.Equals(o2) == 0);
         assert((o1 == o2) == 0);
-        assert(o1.equals(o1) == 1);
+        assert(o1.Equals(o1) == 1);
         assert((o1 == o1) == 1);
-        assert(o1.not_equals(o2) == 1);
+        assert(o1.NotEquals(o2) == 1);
         assert((o1 != o2) == 1);
-        assert(o1.not_equals(o1) == 0);
+        assert(o1.NotEquals(o1) == 0);
         assert((o1 != o1) == 0);
-        assert(o1.greater_than(o2) == 0);
+        assert(o1.GreaterThan(o2) == 0);
         assert((o1 > o2) == 0);
-        assert(o1.greater_equal(o2) == 0);
+        assert(o1.GreaterEqual(o2) == 0);
         assert((o1 >= o2) == 0);
         assert((o1 == o2) == 0);
     }
