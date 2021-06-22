@@ -28,8 +28,8 @@ namespace Py
             iterator&           operator++() { ++m_index; return (*this); }
             iterator&           operator--() { --m_index; return (*this); }
 
-            value_type          operator*() { return m_data->GetItem(m_index); }
-            const value_type    operator*() const { return m_data->GetItem(m_index); }
+            Object              operator*() { return m_data->GetItem(m_index); }
+            const Object        operator*() const { return m_data->GetItem(m_index); }
         };
     public:
         using Object::Object;

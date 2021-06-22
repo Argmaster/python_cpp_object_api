@@ -28,8 +28,8 @@ namespace Py
             iterator&           operator++() { ++m_index; return (*this); }
             iterator&           operator--() { --m_index; return (*this); }
 
-            value_type          operator*() { return m_data->GetItem(m_index); }
-            const value_type    operator*() const { return m_data->GetItem(m_index); }
+            Object              operator*() { return m_data->GetItem(m_index); }
+            const Object        operator*() const { return m_data->GetItem(m_index); }
         };
     public:
         using Object::Object;
@@ -81,15 +81,15 @@ namespace Py
         */
         int     Insert(Py_ssize_t index, Object item) const;
         /**
-            @brief Sort the items of list in place. Return 0 on success, -1 on failure.
+            @brief Sort the items of list in place. Return itself on success and List(NULL) on failure.
                 This is equivalent to list.sort().
         */
-        int     Sort() const;
+        List    Sort() const;
         /**
-            @brief Reverse the items of list in place. Return 0 on success, -1 on failure.
+            @brief Reverse the items of list in place. Return itself on success and List(NULL) on failure.
                 This is the equivalent of list.reverse().
         */
-        int     Reverse() const;
+        List    Reverse() const;
         /**
             @brief Return a new tuple object containing the contents of list; equivalent to tuple(list).
         */

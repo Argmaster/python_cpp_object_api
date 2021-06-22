@@ -34,11 +34,13 @@ namespace Py
     int     List::Insert(Py_ssize_t index, Object item) const {
         return PyList_Insert(m_ref, index, item);
     }
-    int     List::Sort() const {
-        return PyList_Sort(m_ref);
+    List     List::Sort() const {
+        PyList_Sort(m_ref);
+        return (*this);
     }
-    int     List::Reverse() const {
-        return PyList_Reverse(m_ref);
+    List     List::Reverse() const {
+        PyList_Reverse(m_ref);
+        return (*this);
     }
     Tuple   List::ToTuple() const {
         return New<Tuple>(PyList_AsTuple(m_ref));
