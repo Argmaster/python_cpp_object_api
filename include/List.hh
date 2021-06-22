@@ -94,6 +94,28 @@ namespace Py
             @brief Return a new tuple object containing the contents of list; equivalent to tuple(list).
         */
         Tuple   ToTuple() const;
+        /*
+            Return the concatenation of o1 and o2 on success, and NULL on failure.
+            This is the equivalent of the Python expression o1 + o2.
+        */
+        Object      Concat(Object other) const;
+        /*
+            Determine if this contains value. If an item in o is equal to value, return 1,
+            otherwise return 0. On error, return -1. This is equivalent to the Python
+            expression value in o.
+        */
+        int         Contains(Object other) const;
+        /*
+            Return the number of occurrences of value in this, that is, return the number of
+            keys for which o[key] == value. On failure, return -1. This is equivalent to
+            the Python expression o.count(value).
+        */
+        Py_ssize_t  Count(Object other) const;
+        /*
+            Return the first index i for which o[i] == value. On error, return -1. This is
+            equivalent to the Python expression o.index(value).
+        */
+        Py_ssize_t  Index(Object other) const;
         // Iterator begin
         iterator begin() { return iterator(this, 0); }
         // Iterator end

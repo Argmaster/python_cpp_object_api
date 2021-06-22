@@ -136,14 +136,13 @@ namespace Py
         inline bool         IsList() { return PyList_CheckExact(m_ref); }
         inline bool         IsTuple() { return PyTuple_CheckExact(m_ref); }
         inline bool         IsSequence() { return PySequence_Check(m_ref); }
+        inline bool         IsBuffer() { return PyObject_CheckBuffer(m_ref); }
+        inline bool         IsCallable() { return PyCallable_Check(m_ref); }
+        inline bool         IsIterator() { return PyIter_Check(m_ref); }
         inline bool         IsDict() { return PyDict_CheckExact(m_ref); }
         inline bool         IsMapping() { return PyMapping_Check(m_ref); }
         inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
         inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
-
-        /* -------------------------------------------------------------------------- */
-        /*                        Python C API Object Protocol                        */
-        /* -------------------------------------------------------------------------- */
         /* -------------------------------------------------------------------------- */
         /*                          Getters, setter, deleters                         */
         /* -------------------------------------------------------------------------- */

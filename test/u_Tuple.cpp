@@ -21,6 +21,13 @@ void test_2()
         assert(e == tuple.GetItem(i));
         i++;
     }
+    assert(tuple.Index(Py::Str("Ala")) == 0);
+    assert(tuple.Count(Py::Str("Ala")) == 1);
+    assert(tuple.Contains(Py::Str("Cat")) == 1);
+    auto tuple1 = Py::Tuple({ Py::Str("Ala") });
+    auto tuple2 = Py::Tuple({ Py::Long(11), Py::Long(-2434), Py::Float(0.3333) });
+    assert(tuple1 + tuple2 == tuple1.Concat(tuple2));
+    assert((tuple1 + tuple2).Length() == 4);
 }
 
 int main(int argc, char* argv[], char* env[])

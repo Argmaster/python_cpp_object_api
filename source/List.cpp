@@ -46,4 +46,16 @@ namespace Py
     Tuple   List::ToTuple() const {
         return New<Tuple>(PyList_AsTuple(m_ref));
     }
+    Object      List::Concat(Object other) const {
+        return New<Object>(PySequence_Concat(m_ref, other));
+    }
+    int         List::Contains(Object other) const {
+        return PySequence_Contains(m_ref, other);
+    }
+    Py_ssize_t  List::Count(Object other) const {
+        return PySequence_Count(m_ref, other);
+    }
+    Py_ssize_t  List::Index(Object other) const {
+        return PySequence_Index(m_ref, other);
+    }
 } // namespace Py

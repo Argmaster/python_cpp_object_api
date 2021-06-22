@@ -21,9 +21,11 @@ namespace Py
         /* -------------------------------------------------------------------------- */
         /*                         String encoding operations                         */
         /* -------------------------------------------------------------------------- */
-        // Return a string containing UTF-8 encoded content of the Unicode object.
-        // The returned buffer always has an extra null byte appended(not included in size),
-        // regardless of whether there are any other null code points.
+        /*
+            Return a string containing UTF-8 encoded content of the Unicode object.
+            The returned buffer always has an extra null byte appended(not included in size),
+            regardless of whether there are any other null code points.
+        */
         std::string AsUTF8() const;
         /*
             Encode a Unicode object with selected charmap and return the result as Python bytes object.
