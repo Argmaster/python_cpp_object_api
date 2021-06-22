@@ -16,6 +16,7 @@
 #include <stdarg.h>
 #include <initializer_list>
 #include <utility>
+#include <functional>
 
 
 #ifdef _DEBUG
@@ -40,6 +41,8 @@ namespace Py
     class Dict;
     class Set;
     class FrozenSet;
+    class Module;
+    class Function;
     /*
         Base class for data type classes, provides part of object interface that
         Should be available in every class, eg. type checks
@@ -63,6 +66,10 @@ namespace Py
         /**
             @brief Moves reference contained by Object, refcount is not incremented */
         Object(Object&& moved_object);
+        /*
+            Null Initialize
+        */
+        Object(nullptr_t ptr) : m_ref(nullptr) {}
         /**
             @brief When dies always decrefs underlying PyObject pointer (null-safe) */
         virtual ~Object() {
@@ -143,6 +150,7 @@ namespace Py
         inline bool         IsMapping() { return PyMapping_Check(m_ref); }
         inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
         inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
+        inline bool         IsModule() { return PyModule_CheckExact(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                          Getters, setter, deleters                         */
         /* -------------------------------------------------------------------------- */
@@ -365,7 +373,7 @@ namespace Py
             @brief Call method of this object retreived via name, with given args and kwargs
                 Return the result of the call on success, or raise an exception and return NULL on failure.
         */
-        Object          CallMethod(std::string name, Tuple args, Dict kwargs);
+        Object          Call(std::string name, Tuple args, Dict kwargs);
         /* -------------------------------------------------------------------------- */
         /*                           Type checks and friends                          */
         /* -------------------------------------------------------------------------- */
@@ -435,3 +443,5 @@ namespace Py
 #include "Dict.hh"
 #include "Set.hh"
 #include "FrozenSet.hh"
+#include "Module.hh"
+#include "Function.hh"
