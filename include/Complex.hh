@@ -7,10 +7,8 @@ namespace Py
     {
     public:
         using Object::Object;
-        // Custom class constuctor from C bool to Python Bool
-        Complex(long double _real, long double _imag) {
-            m_ref = PyComplex_FromDoubles(_real, _imag);
-        }
+        // Custom class constuctor from C doubles to Python Complex
+        Complex(long double _real, long double _imag);
 
     };
 }

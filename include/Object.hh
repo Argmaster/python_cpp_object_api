@@ -17,6 +17,7 @@
 #include <initializer_list>
 #include <utility>
 #include <functional>
+#include <bitset>
 
 
 #ifdef _DEBUG
@@ -43,6 +44,7 @@ namespace Py
     class FrozenSet;
     class Module;
     class Function;
+    #define PyNoneObject Py::Old<Py::Object>(Py_None);
     /*
         Base class for data type classes, provides part of object interface that
         Should be available in every class, eg. type checks
@@ -89,7 +91,7 @@ namespace Py
         friend Wrapper_T Old(PyObject* py_weak_ref);
         /**
             @brief stream out operator overload */
-        friend std::ostream& operator << (std::ostream& os, Object py_object);
+        friend std::ostream& operator << (std::ostream& os, const Object& py_object);
         /**
             @brief Explicit shortcut for null test */
         inline bool         IsNull() const { return m_ref == NULL; }
@@ -151,6 +153,8 @@ namespace Py
         inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
         inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
         inline bool         IsModule() { return PyModule_CheckExact(m_ref); }
+        inline bool         IsFunction() { return PyFunction_Check(m_ref); }
+        inline bool         IsCFunction() { return PyCFunction_Check(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                          Getters, setter, deleters                         */
         /* -------------------------------------------------------------------------- */
@@ -365,13 +369,25 @@ namespace Py
         */
         Object          Iter() { return PyObject_GetIter(m_ref); }
         /**
-            @brief Call object as if it was a function, with given args (can't be NULL) and kwargs
-                Return the result of the call on success, or raise an exception and return NULL on failure.
+            Call a callable Python object with arguments given by the
+            tuple 'args' and keywords arguments given by the dictionary 'kwargs'.
+
+            'args' must not be NULL, use an empty tuple if no arguments are
+            needed. If no named arguments are needed, 'kwargs' can be NULL.
+
+            This is the equivalent of the Python expression:
+            callable(*args, **kwargs).
         */
         Object          Call(Tuple args, Dict kwargs);
         /**
-            @brief Call method of this object retreived via name, with given args (can't be NULL) and kwargs
-                Return the result of the call on success, or raise an exception and return NULL on failure.
+            Call function retreived with GetAttr by name with arguments given by the
+            tuple 'args' and keywords arguments given by the dictionary 'kwargs'.
+
+            'args' must not be NULL, use an empty tuple if no arguments are
+            needed. If no named arguments are needed, 'kwargs' can be NULL.
+
+            This is the equivalent of the Python expression:
+            callable(*args, **kwargs).
         */
         Object          Call(std::string name, Tuple args, Dict kwargs);
         /* -------------------------------------------------------------------------- */
@@ -427,6 +443,15 @@ namespace Py
     Wrapper_T Old(PyObject* py_weak_ref) {
         Py_XINCREF(py_weak_ref);
         return Wrapper_T(py_weak_ref);
+    }
+    template<typename T, typename... Args>
+    void print(T param, Args... args) {
+        std::cout << param << " ";
+        print(args...);
+    }
+    template<typename T>
+    void print(T param) {
+        std::cout << param << std::endl;
     }
 } // namespace Py
 

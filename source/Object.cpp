@@ -97,12 +97,17 @@ namespace Py
     /* -------------------------------------------------------------------------- */
     /*                          Common object operations                          */
     /* -------------------------------------------------------------------------- */
-    Str             Object::Repr() const { return New<Str>(PyObject_Repr(m_ref)); }
+    Str             Object::Repr() const {
+        if (IsNotNull()) {
+            return New<Str>(PyObject_Repr(m_ref));
+        } else
+            return Str("<PyObject NULL>");
+    }
     std::string     Object::ReprCStr() const {
-        auto temp = PyObject_Repr(m_ref);
-        const std::string temp_str = PyUnicode_AsUTF8(temp);
-        Py_XDECREF(temp);
-        return temp_str;
+        if (IsNotNull()) {
+            return PyUnicode_AsUTF8(PyObject_Repr(m_ref));
+        } else
+            return "<PyObject NULL>";
     }
     Str             Object::ASCII() const { return New<Str>(PyObject_ASCII(m_ref)); }
     Str             Object::ToStr() const { return New<Str>(PyObject_Str(m_ref)); }
@@ -120,9 +125,10 @@ namespace Py
             return New<Object>(PyObject_Call(GetAttr(name), args, kwargs));
     }
     // IO stream overload
-    std::ostream& operator << (std::ostream& os, Object py_object) {
-        return os << py_object.ReprCStr();
-        //return os << "Py[" << py_object.GetRef()->ob_type->tp_name << "](" << py_object.ReprCStr() << ')';
+    std::ostream& operator << (std::ostream& os, const Object& py_object) {
+        const std::string buff = py_object.ReprCStr();
+        os.write(buff.c_str(), buff.length());
+        return os;
     }
 }
 

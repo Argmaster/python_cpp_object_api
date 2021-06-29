@@ -1,9 +1,26 @@
 #include "Function.hh"
 #include <assert.h>
 
+Py::Object func(
+    Py::Object self,
+    Py::Tuple args,
+    Py::Dict kwargs
+) {
+    Py::print("Hello there im here");
+    Py::print(args);
+    Py::print(kwargs);
+    return Py::Tuple({});
+}
+
 void test_1()
 {
-    auto func = Py::Function(nullptr);
+    {
+        Py::Function pyfunc(func, "some function here");
+        Py::print("Hi there");
+        Py::print(pyfunc);
+        Py::print(pyfunc({ Py::Long(11) }, { { "kot", Py::Long(123) } }));
+    }
+    Py::print("After dealloc");
 }
 void test_2()
 {
