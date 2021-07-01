@@ -36,9 +36,9 @@ namespace Py
             else
                 return Py::Str(*self->c_signature);
         }
-        void        tp_finalize(CFunctionWrapper *self) {
+        /*void        tp_finalize(CFunctionWrapper *self) {
             print("Not called");
-        }
+        }*/
     }
     void init_CFunctionType() {
         if (!_CFunctionWrapperType::is_ready) {

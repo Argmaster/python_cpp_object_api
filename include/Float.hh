@@ -6,10 +6,8 @@ namespace Py
     {
     public:
         using Object::Object;
-        // Custom class constuctor from C bool to Python Bool
-        Float(long double _value) : Object(nullptr) {
-            m_ref = PyFloat_FromDouble(_value);
-        }
+        // Custom class constuctor from C float to Python Float
+        Float(long double _value);
 
     };
 }

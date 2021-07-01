@@ -8,6 +8,5 @@ namespace Py
         using Object::Object;
         // Create new frozenset containing unque elements of _elements list
         FrozenSet(std::initializer_list<Object> _elements);
-
     };
 }

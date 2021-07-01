@@ -8,9 +8,7 @@ namespace Py
     public:
         using Object::Object;
         // Custom class constuctor from C bool to Python Bool
-        Bool(bool _bool) : Object(nullptr) {
-            m_ref = PyBool_FromLong(_bool);
-        }
+        Bool(bool _bool);
         operator bool() { return IsTrue(); }
     };
 }

@@ -12,14 +12,21 @@ namespace Py
         std::string* c_signature;
         std::string* c_doc;
     };
+    /*
+        Namespace for CFunctionWrapperType method definitions
+    */
     namespace _CFunctionWrapperType
     {
         static bool is_ready = false;
+        // deallocation method, with non-standard members deallocation
         void        tp_dealloc(CFunctionWrapper* self);
+        // standard object initialization
         int         tp_init(CFunctionWrapper* self, PyObject* args, PyObject* kwargs);
+        // call overload allowing function-like behaviour on python side
         PyObject*   tp_call(PyObject* self, PyObject* args, PyObject* kwargs);
+        // stringification function, c_signature and c_doc are contained in it
         PyObject*   tp_str(CFunctionWrapper* self);
-        void        tp_finalize(CFunctionWrapper* self);
+        //void        tp_finalize(CFunctionWrapper* self);
     }
 
     static PyTypeObject CFunctionWrapperType{

@@ -9,6 +9,5 @@ namespace Py
         using Object::Object;
         // Custom class constuctor from C long to Python Long
         Long(long _long);
-
     };
 }
