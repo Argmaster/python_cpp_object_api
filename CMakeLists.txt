@@ -7,9 +7,9 @@ project ("Python CPP Object API")
 
 set(INCLUDES
     ${PROJECT_SOURCE_DIR}/include
-    "D:\\dev\\python\\python395\\include"
+    ${PROJECT_SOURCE_DIR}/deps/python/include
 )
-set(PYTHON_LIB_FILES "D:/dev/python/python395/libs/python39.lib")
+set(PYTHON_LIB_FILES ${PROJECT_SOURCE_DIR}/deps/python/libs/python39.lib)
 
 include_directories(${INCLUDES})
 link_libraries(${PYTHON_LIB_FILES})
