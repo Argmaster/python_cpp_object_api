@@ -1,21 +1,30 @@
-
 cmake_minimum_required(VERSION 3.9)
 cmake_policy(SET CMP0042 NEW)
 set (CMAKE_CXX_STANDARD 20)
 
-project ("Python CPP Object API")
+project (python_cpp_object_api)
 
 set(INCLUDES
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/deps/python/include
 )
-set(PYTHON_LIB_FILES ${PROJECT_SOURCE_DIR}/deps/python/libs/python39.lib)
-
+set(PYTHON_LIB_FILES
+    ${PROJECT_SOURCE_DIR}/deps/python/libs/python39.lib
+)
 include_directories(${INCLUDES})
 link_libraries(${PYTHON_LIB_FILES})
 
-file(GLOB GLOB_SOURCES
-    source/*.cpp
+file(GLOB GLOB_SOURCES source/*.cpp)
+add_library(${PROJECT_NAME} ${GLOB_SOURCES})
+
+target_include_directories(
+    ${PROJECT_NAME}
+    PUBLIC
+        ${INCLUDES}
+)
+target_link_libraries(
+    ${PROJECT_NAME}
+    ${PYTHON_LIB_FILES}
 )
 
 enable_testing()
