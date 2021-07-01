@@ -5,46 +5,47 @@
 namespace Py
 {
     typedef std::function<Object(Object, Tuple, Dict)> PyCFunctionT;
-    struct CFunctionObject
+    struct CFunctionWrapper
     {
         PyObject_HEAD;
         PyCFunctionT* c_function;
+        std::string* c_signature;
         std::string* c_doc;
     };
-    namespace _CFunctionType
+    namespace _CFunctionWrapperType
     {
         static bool is_ready = false;
-        void        tp_dealloc(CFunctionObject* self);
-        int         tp_init(CFunctionObject* self, PyObject* args, PyObject* kwargs);
+        void        tp_dealloc(CFunctionWrapper* self);
+        int         tp_init(CFunctionWrapper* self, PyObject* args, PyObject* kwargs);
         PyObject*   tp_call(PyObject* self, PyObject* args, PyObject* kwargs);
-        int         tp_traverse(CFunctionObject* self, visitproc visit, void* args);
-        int         tp_clear(CFunctionObject* self);
+        PyObject*   tp_str(CFunctionWrapper* self);
+        void        tp_finalize(CFunctionWrapper* self);
     }
 
-    static PyTypeObject CFunctionType{
+    static PyTypeObject CFunctionWrapperType{
         .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "CFunctionType",
-        .tp_basicsize = sizeof(CFunctionObject),
+        .tp_name = "CFunctionWrapper",
+        .tp_basicsize = sizeof(CFunctionWrapper),
         .tp_itemsize = 0,
-        .tp_dealloc = (destructor)_CFunctionType::tp_dealloc,
-        .tp_vectorcall_offset = 0,
+        .tp_dealloc = (destructor)_CFunctionWrapperType::tp_dealloc,
+        //.tp_vectorcall_offset
         //.tp_getattr
         //.tp_setattr
         //.tp_as_async
-        //.tp_repr
+        .tp_repr = (reprfunc)_CFunctionWrapperType::tp_str,
         //.tp_as_number
         //.tp_as_sequence
         //.tp_as_mapping
         //.tp_hash
-        .tp_call = _CFunctionType::tp_call,
-        //.tp_str
+        .tp_call = _CFunctionWrapperType::tp_call,
+        .tp_str = (reprfunc)_CFunctionWrapperType::tp_str,
         //.tp_getattro
         //.tp_setattro
         //.tp_as_buffer
-        .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC,
+        .tp_flags = Py_TPFLAGS_DEFAULT,
         .tp_doc = "Wrapper object for C functions",
-        .tp_traverse = (traverseproc)_CFunctionType::tp_traverse,
-        .tp_clear = (inquiry)_CFunctionType::tp_clear,
+        //.tp_traverse
+        //.tp_clear
         //.tp_richcompare
         //.tp_weaklistoffset
         //.tp_iter
@@ -57,9 +58,9 @@ namespace Py
         //.tp_descr_get
         //.tp_descr_set
         //.tp_dictoffset
-        .tp_init = *(initproc*)&_CFunctionType::tp_init,
+        .tp_init = (initproc)_CFunctionWrapperType::tp_init,
         //.tp_alloc
-        .tp_new = PyType_GenericNew
+        .tp_new = PyType_GenericNew,
         //.tp_free
         //.tp_is_gc
         //.tp_bases
@@ -69,7 +70,7 @@ namespace Py
         //.tp_weaklist
         //.tp_del
         //.tp_version_tag
-        //.tp_finalize
+        //.tp_finalize = (destructor)_CFunctionWrapperType::tp_finalize
         //.tp_vectorcall
     };
     void init_CFunctionType();
@@ -79,7 +80,8 @@ namespace Py
         using Object::Object;
         Function(
             PyCFunctionT c_function,
-            std::string function_doc
+            std::string signature="",
+            std::string function_doc=""
         );
         /*
             Call a callable Python object 'callable' with arguments given by the

@@ -3,9 +3,6 @@
 
 namespace Py
 {
-    Object::Object() : m_ref(nullptr) {
-        __LOG("Object New!");
-    }
     Object::Object(PyObject* py_object)
         : m_ref(py_object) {
         __LOG("Object From!");

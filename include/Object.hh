@@ -26,6 +26,7 @@
 #define __LOG(info)
 #endif
 
+#define IsNULL(value) if ((value) == NULL) return nullptr;
 
 namespace Py
 {
@@ -55,9 +56,6 @@ namespace Py
         /*
             Actuall underlying PyObject, which refcount will be controled */
         PyObject* m_ref = nullptr;
-        /*
-            default constructor for internal usage, initialize m_ref with nullptr */
-        Object();
         /*
             Create new object with reference to new PyObject (steal reference) */
         Object(PyObject* py_object);

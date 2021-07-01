@@ -37,6 +37,30 @@ namespace Py
             @brief Construct tuple from variable count of PyObjects
         */
         Tuple(std::initializer_list<Object> _elements);
+        /*
+            Parse the parameters of a function that takes only positional parameters into local
+            variables. Returns true on success; on failure, it returns false and
+            raises the appropriate exception.
+        */
+        template<typename ...Args>
+        int ParseTuple(const char* format, Args... args) {
+            return PyArg_ParseTuple(m_ref, format, args...);
+        }
+        /*
+            Build Tuple or single object based on format from args.
+            It builds a tuple only if its format string contains two or more format units. If
+            the format string is empty, it returns None; if it contains exactly one format
+            unit, it returns whatever object is described by that format unit. To force it
+            to return a tuple of size 0 or one, parenthesize the format string.
+            Returns the value or NULL in the case of an error; an exception will be raised if
+            NULL is returned. When memory buffers are passed as parameters to supply
+            data to build objects, as for the s and s# formats, the required data is
+            copied. For format specifiers look at: https://docs.python.org/3/c-api/arg.html#c.Py_BuildValue
+        */
+        template<typename ...Args>
+        static Object BuildValue(const char* format, Args... args) {
+            return New<Object>(Py_BuildValue(format, args...));
+        }
         /**
             @brief Return the object at position pos in the tuple. If pos is out of bounds,
                 return NULL and set an IndexError exception.
