@@ -5,18 +5,14 @@ namespace Py
 {
     Object::Object(PyObject* py_object)
         : m_ref(py_object) {
-        __LOG("Object From!");
     }
-    Object::Object(const Object& moved_object)
-        : m_ref(moved_object.m_ref) {
-        Py_XINCREF(moved_object.m_ref);
-        __LOG("Object Copied!");
+    Object::Object(const Object& copied_object)
+        : m_ref(copied_object.m_ref) {
+        Py_XINCREF(copied_object.m_ref);
     }
     Object::Object(Object&& moved_object)
         : m_ref(moved_object.m_ref) {
         moved_object.m_ref = nullptr;
-        //Py_XINCREF(moved_object.m_ref);
-        __LOG("Object Moved!");
     }
     /* -------------------------------------------------------------------------- */
     /*                          Getters, setter, deleters                         */
@@ -114,12 +110,20 @@ namespace Py
     bool            Object::Not() const { return PyObject_Not(m_ref); }
     Py_ssize_t      Object::Size() const { return PyObject_Size(m_ref); }
     Py_ssize_t      Object::Length() const { return PyObject_Length(m_ref); }
-    Object          Object::Call(Tuple args, Dict kwargs) { return New<Object>(PyObject_Call(m_ref, args, kwargs)); }
-    Object          Object::Call(std::string name, Tuple args, Dict kwargs) {
+    Object          Object::Call(Tuple args, Dict kwargs) {
         if (args.IsNull())
-            return New<Object>(PyObject_Call(GetAttr(name), Tuple({}), kwargs));
+            return New<Object>(PyObject_Call(m_ref, Tuple({}), kwargs));
         else
-            return New<Object>(PyObject_Call(GetAttr(name), args, kwargs));
+            return New<Object>(PyObject_Call(m_ref, args, kwargs));
+    }
+    Object          Object::Call(std::string name, Tuple args, Dict kwargs) {
+        Object callable = GetAttr(name);
+        if (callable.IsNull())
+            Exception::Raise(PyExc_KeyError, Py::Str::FromFormat("Failed to fetch key '%s'", name.c_str()));
+        if (args.IsNull())
+            return New<Object>(PyObject_Call(callable, Tuple({}), kwargs));
+        else
+            return New<Object>(PyObject_Call(callable, args, kwargs));
     }
     // IO stream overload
     std::ostream& operator << (std::ostream& os, const Object& py_object) {

@@ -28,7 +28,6 @@ namespace Py
         PyObject*   tp_str(CFunctionWrapper* self);
         //void        tp_finalize(CFunctionWrapper* self);
     }
-
     static PyTypeObject CFunctionWrapperType{
         .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
         .tp_name = "CFunctionWrapper",

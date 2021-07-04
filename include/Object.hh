@@ -31,6 +31,7 @@
 namespace Py
 {
     // Forward declare classes for all basic builtin Python data types
+    class Object;
     class Long;
     class Float;
     class Complex;
@@ -45,7 +46,15 @@ namespace Py
     class FrozenSet;
     class Module;
     class Function;
-    #define PyNoneObject Py::Old<Py::Object>(Py_None);
+    class Exception;
+    static struct
+    {
+        Module* traceback = nullptr;
+        Module* inspect = nullptr;
+        Module* json = nullptr;
+    } Modules;
+
+#define PyNoneObject Py::Old<Py::Object>(Py_None);
     /*
         Base class for data type classes, provides part of object interface that
         Should be available in every class, eg. type checks
@@ -62,7 +71,7 @@ namespace Py
     public:
         /*
             Copies reference contained by Object, refcount is incremented */
-        Object(const Object& moved_object);
+        Object(const Object& copied_object);
         /**
             @brief Moves reference contained by Object, refcount is not incremented */
         Object(Object&& moved_object);
@@ -73,10 +82,6 @@ namespace Py
         /**
             @brief When dies always decrefs underlying PyObject pointer (null-safe) */
         virtual ~Object() {
-#ifdef _DEBUG
-            if (IsNotNull())
-                __LOG("Object DECREF! " << RefC() << " (-1)");
-#endif
             Py_XDECREF(m_ref);
         }
         /**
@@ -453,7 +458,7 @@ namespace Py
     }
 } // namespace Py
 
-
+#include "Exception.hh"
 #include "Long.hh"
 #include "Float.hh"
 #include "Complex.hh"

@@ -62,3 +62,7 @@ add_test("Py::Module methods" Unit_Dict "2")
 add_executable(Unit_Function ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Function.cpp)
 add_test("Py::Function construction" Unit_Function "1")
 add_test("Py::Function methods" Unit_Function "2")
+
+# Integration tests
+add_executable(Integrate_Core ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/i_Core.cpp)
+add_test("Py::Core integrate" Integrate_Core)
