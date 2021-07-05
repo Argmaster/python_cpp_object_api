@@ -3,6 +3,12 @@
 
 namespace Py
 {
+    namespace Modules
+    {
+        Module* traceback = nullptr;
+        Module* inspect = nullptr;
+        Module* json = nullptr;
+    };
     Object::Object(PyObject* py_object)
         : m_ref(py_object) {
     }
@@ -111,19 +117,13 @@ namespace Py
     Py_ssize_t      Object::Size() const { return PyObject_Size(m_ref); }
     Py_ssize_t      Object::Length() const { return PyObject_Length(m_ref); }
     Object          Object::Call(Tuple args, Dict kwargs) {
-        if (args.IsNull())
-            return New<Object>(PyObject_Call(m_ref, Tuple({}), kwargs));
-        else
-            return New<Object>(PyObject_Call(m_ref, args, kwargs));
+        return New<Object>(PyObject_Call(m_ref, args, kwargs));
     }
     Object          Object::Call(std::string name, Tuple args, Dict kwargs) {
         Object callable = GetAttr(name);
         if (callable.IsNull())
             Exception::Raise(PyExc_KeyError, Py::Str::FromFormat("Failed to fetch key '%s'", name.c_str()));
-        if (args.IsNull())
-            return New<Object>(PyObject_Call(callable, Tuple({}), kwargs));
-        else
-            return New<Object>(PyObject_Call(callable, args, kwargs));
+        return New<Object>(PyObject_Call(callable, args, kwargs));
     }
     // IO stream overload
     std::ostream& operator << (std::ostream& os, const Object& py_object) {

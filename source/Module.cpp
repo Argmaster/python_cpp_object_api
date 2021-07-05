@@ -23,14 +23,7 @@ namespace Py
         }
     }
     Module Module::Import(std::string name) {
-        Module mod(PyImport_GetModule(Str(name)));
-        if (mod.IsNull() && PyErr_Occurred()) {
-            return nullptr;
-        } else if (mod.IsNull()) {
-            return New<Module>(PyImport_Import(Str(name)));
-        } else {
-            return mod;
-        }
+        return PyImport_Import(Str(name));
     }
     Dict Module::GetSysModules() { return Old<Dict>(PyImport_GetModuleDict()); }
 } // namespace Py

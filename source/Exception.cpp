@@ -51,6 +51,27 @@ namespace Py
         PyErr_Restore(m_type, m_value, m_traceback);
     }
     Py::Str Exception::ToStr() {
-        return Modules.traceback->Call("format_exc", {}, nullptr).As<Py::Str>();
+        std::cout << m_type << std::endl;
+        std::cout << m_value << std::endl;
+        std::cout << m_traceback << std::endl;
+        std::cout << Modules::traceback << std::endl;
+        if (m_traceback == NULL) {
+            return Py::Str("\n").Join(
+                Py::Modules::traceback->Call(
+                    "format_exception_only", {
+                        Old<Object>(m_type),
+                        Old<Object>(m_value)
+                    }, {}
+            ).As<Py::Str>());
+        } else {
+            return Py::Str("\n").Join(
+                Py::Modules::traceback->Call(
+                    "format_exception", {
+                        Old<Object>(m_type),
+                        Old<Object>(m_value),
+                        Old<Object>(m_traceback)
+                    }, {}
+            ).As<Py::Str>());
+        }
     }
 } // namespace Py

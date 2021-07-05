@@ -15,7 +15,7 @@ include_directories(${INCLUDES})
 link_libraries(${PYTHON_LIB_FILES})
 
 file(GLOB GLOB_SOURCES source/*.cpp)
-add_library(${PROJECT_NAME} ${GLOB_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${GLOB_SOURCES})
 
 target_include_directories(
     ${PROJECT_NAME}

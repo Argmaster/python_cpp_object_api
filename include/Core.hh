@@ -16,14 +16,14 @@ namespace Py
         if (PyStatus_Exception(status)) {
             throw status;
         }
-        Modules.traceback = new Module(Module::Import("traceback"));
-        Modules.inspect = new Module(Module::Import("inspect"));
-        Modules.json = new Module(Module::Import("json"));
+        Modules::traceback = new Module(Module::Import("traceback"));
+        Modules::inspect = new Module(Module::Import("inspect"));
+        Modules::json = new Module(Module::Import("json"));
     }
     void Finalize() {
-        delete Modules.traceback;
-        delete Modules.inspect;
-        delete Modules.json;
+        delete Modules::traceback;
+        delete Modules::inspect;
+        delete Modules::json;
         if (Py_FinalizeEx() != 0) {
             throw - 1;
         }

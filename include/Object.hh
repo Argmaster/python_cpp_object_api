@@ -48,12 +48,12 @@ namespace Py
     class Module;
     class Function;
     class Exception;
-    static struct
+    namespace Modules
     {
-        Module* traceback = nullptr;
-        Module* inspect = nullptr;
-        Module* json = nullptr;
-    } Modules;
+        extern Module* traceback;
+        extern Module* inspect;
+        extern Module* json;
+    };
 
 #define PyNoneObject Py::Old<Py::Object>(Py_None);
     /*
