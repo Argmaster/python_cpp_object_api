@@ -49,6 +49,7 @@ namespace Py
     class Module;
     class Function;
     class Exception;
+    class Mapping;
     namespace Modules
     {
         extern Module* traceback;
@@ -495,3 +496,4 @@ namespace Py
 #include "FrozenSet.hh"
 #include "Module.hh"
 #include "Function.hh"
+#include "Mapping.hh"
