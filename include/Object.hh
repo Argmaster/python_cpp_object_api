@@ -86,6 +86,13 @@ namespace Py
         virtual ~Object() {
             Py_XDECREF(m_ref);
         }
+        Object& operator= (const Object& other) {
+            if (this != &other) {
+                Py_XDECREF(this->m_ref);
+                Py_XINCREF(other.m_ref);
+                this->m_ref = other.m_ref;
+            }
+        }
         /**
             @brief Construct Wrapper_T out of New PyObject Reference */
         template<typename Wrapper_T>
