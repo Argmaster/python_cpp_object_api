@@ -49,12 +49,18 @@ namespace Py
         Py_XINCREF(m_value);
         Py_XINCREF(m_traceback);
         PyErr_Restore(m_type, m_value, m_traceback);
+        throw Exception::Error(StrNoTb());
     }
-    Py::Str Exception::ToStr() {
-        std::cout << m_type << std::endl;
-        std::cout << m_value << std::endl;
-        std::cout << m_traceback << std::endl;
-        std::cout << Modules::traceback << std::endl;
+    std::string Exception::StrNoTb() {
+        return Py::Str("\n").Join(
+            Py::Modules::traceback->Call(
+                "format_exception_only", {
+                    Old<Object>(m_type),
+                    Old<Object>(m_value)
+                }, {}
+        ).As<Py::Str>()).AsUTF8();
+    }
+    Str Exception::ToStr() {
         if (m_traceback == NULL) {
             return Py::Str("\n").Join(
                 Py::Modules::traceback->Call(

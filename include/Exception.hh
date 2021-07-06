@@ -16,6 +16,9 @@ namespace Py
         {
             std::string message;
             Error(std::string mess) : message(mess) {}
+            friend std::ostream& operator << (std::ostream& out, Error exc) {
+                return out << exc.message;
+            }
         };
         // copy constructor
         Exception(const Exception& copied_object);
@@ -35,7 +38,10 @@ namespace Py
         static Exception Catch();
         // raise this exception object
         void Raise();
+        // string representation of exception without traceback
+        std::string Exception::StrNoTb();
         // stringify exception
         Py::Str ToStr();
+        friend std::ostream& operator << (std::ostream& out, Exception exc);
     };
 } // namespace Py

@@ -27,10 +27,23 @@ namespace Py
         return PyObject_HasAttr(m_ref, attr_name);
     }
     Object          Object::GetAttr(Str attr_name) const {
-        return PyObject_GetAttr(m_ref, attr_name);
+        auto attr = PyObject_GetAttr(m_ref, attr_name);
+        if (attr == NULL) {
+            Py::Exception::Raise(
+                PyExc_AttributeError,
+                Py::Str::FromFormat("Attribute '%s' doesn't exist", attr_name.AsUTF8().c_str())
+            );
+        }
+        return attr;
     }
-    int             Object::SetAttr(Str attr_name, PyObject* value) const {
-        return PyObject_SetAttr(m_ref, attr_name, value);
+    void            Object::SetAttr(Str attr_name, PyObject* value) const {
+        auto retval = PyObject_SetAttr(m_ref, attr_name, value);
+        if (retval == -1) {
+            Exception::Raise(
+                PyExc_AttributeError,
+                Py::Str::FromFormat("Failed to set attribute '%s'", attr_name.AsUTF8().c_str())
+            );
+        }
     }
     int             Object::DelAttr(Str attr_name) const {
         return PyObject_DelAttr(m_ref, attr_name);
@@ -104,7 +117,12 @@ namespace Py
     }
     std::string     Object::ReprCStr() const {
         if (IsNotNull()) {
-            return PyUnicode_AsUTF8(PyObject_Repr(m_ref));
+            auto repr = PyObject_Repr(m_ref);
+            if (repr == NULL) {
+                Exception::Clear();
+                repr = PyObject_Str(m_ref);
+            }
+            return PyUnicode_AsUTF8(repr);
         } else
             return "<PyObject NULL>";
     }
@@ -121,8 +139,6 @@ namespace Py
     }
     Object          Object::Call(std::string name, Tuple args, Dict kwargs) {
         Object callable = GetAttr(name);
-        if (callable.IsNull())
-            Exception::Raise(PyExc_KeyError, Py::Str::FromFormat("Failed to fetch key '%s'", name.c_str()));
         return New<Object>(PyObject_Call(callable, args, kwargs));
     }
     // IO stream overload

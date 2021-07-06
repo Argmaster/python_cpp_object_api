@@ -60,4 +60,12 @@ namespace Py
     Object Function::operator() (Tuple args, Dict kwargs) const {
         return New<Object>(PyObject_Call(m_ref, args, kwargs)).INCREF();
     }
+    std::string Function::Signature() const {
+        return "Python Function " + (GetAttr("__qualname__").As<Str>() + Py::Modules::inspect->Call(
+            "signature", { *this }, {}
+        ).ToStr()).AsUTF8();
+    }
+    std::ostream& operator << (std::ostream& out, Exception exc) {
+        return out << exc.ToStr();
+    }
 } // namespace Py

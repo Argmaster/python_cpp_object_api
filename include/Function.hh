@@ -5,6 +5,9 @@
 namespace Py
 {
     typedef std::function<Object(Object, Tuple, Dict)> PyCFunctionT;
+    /*
+        C type for function wrapper python class
+    */
     struct CFunctionWrapper
     {
         PyObject_HEAD;
@@ -28,6 +31,9 @@ namespace Py
         PyObject*   tp_str(CFunctionWrapper* self);
         //void        tp_finalize(CFunctionWrapper* self);
     }
+    /*
+        Function Wrapper python type skeleton
+    */
     static PyTypeObject CFunctionWrapperType{
         .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
         .tp_name = "CFunctionWrapper",
@@ -79,7 +85,16 @@ namespace Py
         //.tp_finalize = (destructor)_CFunctionWrapperType::tp_finalize
         //.tp_vectorcall
     };
+    /*
+        Type initialization function, has to be called before type is used for
+        the first time, becouse it will fill all the fields with, respectively,
+        NULLs and inherited methods
+    */
     void init_CFunctionType();
+    /*
+        Wrapper type for any kind of python callable function, including bound methods
+        module level functions, python callable C functions
+    */
     class Function : public Object
     {
     public:
@@ -100,5 +115,6 @@ namespace Py
             callable(*args, **kwargs).
         */
         Object operator () (Tuple args, Dict kwargs) const;
+        std::string Signature() const;
     };
 } // namespace Py

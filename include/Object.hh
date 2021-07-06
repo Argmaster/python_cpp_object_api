@@ -181,12 +181,11 @@ namespace Py
         virtual Object          GetAttr(Str attr_name) const;
         /**
             @brief Set the value of the attribute named attr_name, for object o, to the value v.
-                Raise an exception and return -1 on failure; return 0 on success.This is the
-                equivalent of the Python statement o.attr_name = v.
-                If v is NULL, the attribute is deleted, however this feature is deprecated in
-                favour of using PyObject_DelAttr().
+                Raise an exception and throw on failure.This is the equivalent of the Python
+                statement o.attr_name = v. If v is NULL, the attribute is deleted, however
+                this feature is deprecated in favour of using PyObject_DelAttr().
         */
-        virtual int             SetAttr(Str attr_name, PyObject* value) const;
+        virtual void            SetAttr(Str attr_name, PyObject* value) const;
         /**
             @brief Delete attribute named attr_name, for object o. Returns -1 on failure.
                 This is the equivalent of the Python statement del o.attr_name.
