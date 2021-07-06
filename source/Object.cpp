@@ -134,10 +134,10 @@ namespace Py
     bool            Object::Not() const { return PyObject_Not(m_ref); }
     Py_ssize_t      Object::Size() const { return PyObject_Size(m_ref); }
     Py_ssize_t      Object::Length() const { return PyObject_Length(m_ref); }
-    Object          Object::Call(Tuple args, Dict kwargs) {
+    Object          Object::Call(Tuple args, Dict kwargs) const {
         return New<Object>(PyObject_Call(m_ref, args, kwargs));
     }
-    Object          Object::Call(std::string name, Tuple args, Dict kwargs) {
+    Object          Object::Call(std::string name, Tuple args, Dict kwargs) const {
         Object callable = GetAttr(name);
         return New<Object>(PyObject_Call(callable, args, kwargs));
     }

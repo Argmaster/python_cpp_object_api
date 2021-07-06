@@ -402,7 +402,7 @@ namespace Py
             This is the equivalent of the Python expression:
             callable(*args, **kwargs).
         */
-        Object          Call(Tuple args, Dict kwargs);
+        Object          Call(Tuple args, Dict kwargs) const;
         /**
             Call function retreived with GetAttr by name with arguments given by the
             tuple 'args' and keywords arguments given by the dictionary 'kwargs'.
@@ -413,7 +413,7 @@ namespace Py
             This is the equivalent of the Python expression:
             callable(*args, **kwargs).
         */
-        Object          Call(std::string name, Tuple args, Dict kwargs);
+        Object          Call(std::string name, Tuple args, Dict kwargs) const;
         /* -------------------------------------------------------------------------- */
         /*                           Type checks and friends                          */
         /* -------------------------------------------------------------------------- */
