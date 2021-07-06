@@ -7,4 +7,7 @@ namespace Py
         : Object(nullptr) {
         m_ref = PyByteArray_FromStringAndSize(_string.c_str(), _string.length());
     }
+    char* ByteArray::AsCString() const {
+        return PyByteArray_AsString(m_ref);
+    }
 } // namespace Py

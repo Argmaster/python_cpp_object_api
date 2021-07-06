@@ -9,5 +9,8 @@ namespace Py
         using Object::Object;
         // Custom class constuctor from C++ std::string to Python bytearray
         ByteArray(const std::string& _string);
+        // Return the contents of bytearray as a char array after checking for a NULL pointer.
+        // The returned array always has an extra null byte appended.
+        char* AsCString() const;
     };
 }
