@@ -7,11 +7,12 @@ namespace Py
     {
     public:
         using Object::Object;
-        // Custom class constuctor from C bool to Python Bool
-        Bytes(const std::string& str)
-            : Object(PyBytes_FromStringAndSize(str.c_str(), str.length())) {}
-        Bytes(const char* str)
-            : Object(PyBytes_FromString(str)) {}
+        // construct bytes object from C++ string
+        Bytes(const std::string& str);
+        // construct bytes object from C string
+        Bytes(const char* str);
+        // construct bytes from data of given length
+        Bytes(const void* data, const Py_ssize_t length);
         /*
             Take a C printf()-style format string and a variable number of arguments,
             calculate the size of the resulting Python bytes object and return a bytes
