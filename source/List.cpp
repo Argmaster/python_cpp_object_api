@@ -11,6 +11,8 @@ namespace Py
             i++;
         }
     }
+    List::List(Py_ssize_t size)
+        : Object(PyList_New(size)) {}
     Object  List::GetItem(Py_ssize_t index) const {
         return Old<Object>(PyList_GetItem(m_ref, index));
     }

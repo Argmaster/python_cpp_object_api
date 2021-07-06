@@ -38,6 +38,10 @@ namespace Py
         */
         List(std::initializer_list<Object> _elements);
         /**
+            @brief Construct new list of size
+        */
+        List(Py_ssize_t size);
+        /**
             @brief Return the object at position index in the list pointed to by list.
                 The position must be non-negative; indexing from the end of the list
                 is not supported. If index is out of bounds (<0 or >=len(list)),

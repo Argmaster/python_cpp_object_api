@@ -57,9 +57,12 @@ void test_3()
         assert(attr.IsNotNull());
     }
     {
-        auto attr = o1.SetAttr(o1, o2);
-        assert(attr == -1);
-        PyErr_Clear();
+        try
+        {
+            o1.SetAttr(o1, o2);
+        } catch (const Py::Exception::Error e) {}
+        assert(Py::Exception::HasOccured());
+        Py::Exception::Clear();
     }
     {
         auto attr = o1.DelAttr(o1);
@@ -107,7 +110,7 @@ void test_3()
         assert((o1.ToStr().AsUTF8() == "__doc__"));
         assert(o1.ToBytes().IsNull()); PyErr_Clear();
     }
-    assert(o1.Call("__repr__", nullptr, nullptr).As<Py::Str>() == "'__doc__'");
+    assert(o1.Call("__repr__", {}, {}).As<Py::Str>() == "'__doc__'");
 }
 
 int main(int argc, char* argv[], char* env[])

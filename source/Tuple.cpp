@@ -3,14 +3,15 @@
 namespace Py
 {
     Tuple::Tuple(std::initializer_list<Object> _elements)
-        : Object(nullptr) {
-        m_ref = PyTuple_New(_elements.size());
+        : Object(PyTuple_New(_elements.size())) {
         Py_ssize_t i = 0;
         for (auto e : _elements) {
             PyTuple_SetItem(m_ref, i, e.INCREF());
             i++;
         }
     }
+    Tuple::Tuple(Py_ssize_t size)
+        : Object(PyTuple_New(size)) {}
     Object      Tuple::GetItem(Py_ssize_t index) const {
         return Old<Object>(PyTuple_GetItem(m_ref, index));
     }

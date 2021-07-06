@@ -5,6 +5,7 @@
 #endif
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <datetime.h>
 #ifdef _DEBUG_MARKER
 #undef _DEBUG_MARKER
 #define _DEBUG 1
@@ -159,6 +160,19 @@ namespace Py
         inline bool         IsModule() { return PyModule_CheckExact(m_ref); }
         inline bool         IsFunction() { return PyFunction_Check(m_ref); }
         inline bool         IsCFunction() { return PyCFunction_Check(m_ref); }
+        inline bool         IsType() { return PyType_CheckExact(m_ref); }
+        inline bool         IsNone() { return m_ref == Py_None; }
+        inline bool         IsEllipsis() { return m_ref == Py_Ellipsis; }
+        inline bool         IsSlice() { return PySlice_Check(m_ref); }
+        inline bool         IsMemoryView() { return PyMemoryView_Check(m_ref); }
+        inline bool         IsGenerator() { return PyGen_CheckExact(m_ref); }
+        inline bool         IsCapsule() { return PyCapsule_CheckExact(m_ref); }
+        inline bool         IsCoroutine() { return PyCoro_CheckExact(m_ref); }
+        inline bool         IsDate() { return PyDate_CheckExact(m_ref); }
+        inline bool         IsDateTime() { return PyDateTime_CheckExact(m_ref); }
+        inline bool         IsTime() { return PyTime_CheckExact(m_ref); }
+        inline bool         IsDelta() { return PyDelta_CheckExact(m_ref); }
+        inline bool         IsTZInfo() { return PyTZInfo_CheckExact(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                          Getters, setter, deleters                         */
         /* -------------------------------------------------------------------------- */

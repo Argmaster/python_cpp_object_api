@@ -33,6 +33,12 @@ namespace Py
         PyErr_SetObject(_exception_type, _object);
         throw Exception::Error(Old<Str>(_object).AsUTF8());
     }
+    bool Exception::HasOccured() {
+        return PyErr_Occurred() != NULL;
+    }
+    bool Exception::HasNotOccured() {
+        return PyErr_Occurred() == NULL;
+    }
     PyObject* Exception::Occured() {
         return PyErr_Occurred();
     }

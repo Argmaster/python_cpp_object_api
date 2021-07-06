@@ -34,6 +34,10 @@ namespace Py
         static void Raise(PyObject* _exception_type, PyObject* _object);
         // check wheather exception occured and return its type
         static PyObject* Occured();
+        // check wheather exception occured and return true if had
+        static bool HasOccured();
+        // check wheather exception not occured and return true if haven't
+        static bool HasNotOccured();
         // catch exception and return as exception object
         static Exception Catch();
         // raise this exception object

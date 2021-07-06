@@ -38,6 +38,10 @@ namespace Py
         */
         Tuple(std::initializer_list<Object> _elements);
         /*
+            construct empty tuple of size
+        */
+        Tuple(Py_ssize_t size);
+        /*
             Parse the parameters of a function that takes only positional parameters into local
             variables. Returns true on success; on failure, it returns false and
             raises the appropriate exception.
