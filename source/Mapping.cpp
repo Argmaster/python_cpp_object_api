@@ -3,13 +3,14 @@
 
 namespace Py
 {
-    Mapping::Mapping(std::initializer_list<std::pair<std::string, Object>> _dict) {
+    Mapping::Mapping(std::initializer_list<std::pair<std::string, Object>> _dict)
+    : Object(PyDict_New()){
         for (auto pair : _dict) {
-            PyMapping_SetItemString(m_ref, pair.first, pair.second);
+            PyMapping_SetItemString(m_ref, pair.first.c_str(), pair.second);
         }
     }
     Object  Mapping::GetItem(const std::string& key) {
-        return PyMapping_GetItemString(m_ref, key.c_str());
+        return New<Object>(PyMapping_GetItemString(m_ref, key.c_str()));
     }
     int     Mapping::SetItem(const std::string& key, Object value) {
         return PyMapping_SetItemString(m_ref, key.c_str(), value);

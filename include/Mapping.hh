@@ -5,6 +5,7 @@ namespace Py
 {
     class Mapping : public Object
     {
+    public:
         using Object::Object;
         // construct new mapping from key value pairs
         Mapping(std::initializer_list<std::pair<std::string, Object>> _dict);

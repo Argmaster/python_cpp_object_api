@@ -3,7 +3,8 @@
 
 namespace Py
 {
-    Dict::Dict(std::initializer_list<std::pair<Str, Object>> _dict) : Object(PyDict_New()) {
+    Dict::Dict(std::initializer_list<std::pair<Str, Object>> _dict)
+     : Object(PyDict_New()) {
         for (auto pair : _dict) {
             PyDict_SetItem(m_ref, pair.first, pair.second);
         }
