@@ -92,6 +92,7 @@ namespace Py
                 Py_XINCREF(other.m_ref);
                 this->m_ref = other.m_ref;
             }
+            return *this;
         }
         /**
             @brief Construct Wrapper_T out of New PyObject Reference */
