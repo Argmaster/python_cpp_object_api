@@ -82,6 +82,8 @@ namespace Py
             Null Initialize
         */
         Object(nullptr_t ptr) : m_ref(nullptr) {}
+        // default constructor for C++ container usage
+        Object() : m_ref(nullptr) {}
         /**
             @brief When dies always decrefs underlying PyObject pointer (null-safe) */
         virtual ~Object() {
