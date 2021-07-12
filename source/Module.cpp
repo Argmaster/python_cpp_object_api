@@ -3,6 +3,13 @@
 
 namespace Py
 {
+    namespace Modules
+    {
+        Module* traceback = nullptr;
+        Module* inspect = nullptr;
+        Module* json = nullptr;
+        Module* builtins = nullptr;
+    };
     Dict Module::GetDict() const {
         return Old<Dict>(PyModule_GetDict(m_ref));
     }

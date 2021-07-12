@@ -3,12 +3,6 @@
 
 namespace Py
 {
-    namespace Modules
-    {
-        Module* traceback = nullptr;
-        Module* inspect = nullptr;
-        Module* json = nullptr;
-    };
     Object::Object(PyObject* py_object)
         : m_ref(py_object) {
     }

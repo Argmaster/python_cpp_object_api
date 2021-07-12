@@ -50,12 +50,6 @@ namespace Py
     class Function;
     class Exception;
     class Mapping;
-    namespace Modules
-    {
-        extern Module* traceback;
-        extern Module* inspect;
-        extern Module* json;
-    };
 
 #define PyNoneObject Py::Old<Py::Object>(Py_None);
     /*

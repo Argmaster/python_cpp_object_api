@@ -19,11 +19,13 @@ namespace Py
         Modules::traceback = new Module(Module::Import("traceback"));
         Modules::inspect = new Module(Module::Import("inspect"));
         Modules::json = new Module(Module::Import("json"));
+        Modules::builtins = new Module(Module::Import("builtins"));
     }
     void Finalize() {
         delete Modules::traceback;
         delete Modules::inspect;
         delete Modules::json;
+        delete Modules::builtins;
         if (Py_FinalizeEx() != 0) {
             throw - 1;
         }

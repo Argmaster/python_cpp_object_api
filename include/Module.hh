@@ -4,6 +4,13 @@
 
 namespace Py
 {
+    namespace Modules
+    {
+        extern Module* traceback;
+        extern Module* inspect;
+        extern Module* json;
+        extern Module* builtins;
+    };
     class Module : public Object
     {
     public:
