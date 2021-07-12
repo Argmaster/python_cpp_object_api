@@ -178,6 +178,7 @@ namespace Py
         inline bool         IsTime() { return PyTime_CheckExact(m_ref); }
         inline bool         IsDelta() { return PyDelta_CheckExact(m_ref); }
         inline bool         IsTZInfo() { return PyTZInfo_CheckExact(m_ref); }
+        inline bool         IsMethod() { return PyInstanceMethod_Check(m_ref); }
         /* -------------------------------------------------------------------------- */
         /*                          Getters, setter, deleters                         */
         /* -------------------------------------------------------------------------- */
