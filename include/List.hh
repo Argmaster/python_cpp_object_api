@@ -40,19 +40,21 @@ namespace Py
         /**
             @brief Construct new list of size
         */
-        List(Py_ssize_t size);
+        explicit List(Py_ssize_t size);
         /**
             @brief Return the object at position index in the list pointed to by list.
                 The position must be non-negative; indexing from the end of the list
                 is not supported. If index is out of bounds (<0 or >=len(list)),
-                return NULL and set an IndexError exception
+                Py::Exception::Error object is raised on C++ side and IndexError is set
+                on Python side.
         */
         Object  GetItem(Py_ssize_t index) const;
         // Shortcut for GetItem method, has identical behaviour
         Object  operator [] (Py_ssize_t index) const;
         /**
             @brief Set the item at index index in list to item. Return 0 on success.
-            If index is out of bounds, return -1 and set an IndexError exception.
+            If index is out of bounds, Py::Exception::Error object is raised on C++ side
+            and IndexError exception is set on Python side.
             This method, in spite of its in contrast to its Python C api relative,
             PyList_SetItem, doesn't stole reference to object, however its usually
             not important, as reference counts are managed automatically
@@ -60,37 +62,49 @@ namespace Py
         int     SetItem(Py_ssize_t index, Object value) const;
         /**
             @brief Return a list of the objects in list containing the objects between
-                low and high. Return NULL and set an exception if unsuccessful. Analogous
-                to list[low:high]. Indexing from the end of the list is not supported.
+                low and high. Analogous to list[low:high].
+                Indexing from the end of the list is not supported.
+                On error Py::Exception::Error object is raised on C++ side
+                and Exception is set on Python side.
         */
         List    GetSlice(Py_ssize_t begin, Py_ssize_t end) const;
         // Shortcut for GetSlice method, has identical behaviour
-        List    operator [] (std::pair<Py_ssize_t, Py_ssize_t> indes) const;
+        List    operator [] (std::pair<Py_ssize_t, Py_ssize_t> indexes) const;
         /**
             @brief Set the slice of list between low and high to the contents of itemlist.
             Analogous to list[low:high] = itemlist. The itemlist may be NULL, indicating
-            the assignment of an empty list (slice deletion). Return 0 on success, -1 on
-            failure. Indexing from the end of the list is not supported.
+            the assignment of an empty list (slice deletion). Return 0 on success.
+            On error Py::Exception::Error object is raised on C++ side
+            and Exception is set on Python side.
+            Indexing from the end of the list is not supported.
         */
         int     SetSlice(Py_ssize_t begin, Py_ssize_t end, List value) const;
         /**
-            @brief Append the object item at the end of list. Return 0 if successful;
-                return -1 and set an exception if unsuccessful. Analogous to list.append(item).
+            @brief Append the object item at the end of list. Return 0 if successful.
+                On error Py::Exception::Error object is raised on C++ side
+                and Exception is set on Python side.
+                Analogous to list.append(item).
         */
         int     Append(Object item) const;
         /**
             @brief Insert the item item into list in front of index index. Return 0 if
-                successful; return -1 and set an exception if unsuccessful. Analogous to
-                list.insert(index, item).
+                successful.
+                On error Py::Exception::Error object is raised on C++ side
+                and Exception is set on Python side.
+                Analogous to list.insert(index, item).
         */
         int     Insert(Py_ssize_t index, Object item) const;
         /**
-            @brief Sort the items of list in place. Return itself on success and List(NULL) on failure.
+            @brief Sort the items of list in place. Return itself on success.
+                On error Py::Exception::Error object is raised on C++ side
+                and Exception is set on Python side.
                 This is equivalent to list.sort().
         */
         List    Sort() const;
         /**
-            @brief Reverse the items of list in place. Return itself on success and List(NULL) on failure.
+            @brief Reverse the items of list in place. Return itself on success.
+                On error Py::Exception::Error object is raised on C++ side
+                and Exception is set on Python side.
                 This is the equivalent of list.reverse().
         */
         List    Reverse() const;
@@ -99,30 +113,31 @@ namespace Py
         */
         Tuple   ToTuple() const;
         /*
-            Return the concatenation of o1 and o2 on success, and NULL on failure.
-            This is the equivalent of the Python expression o1 + o2.
-        */
-        Object      Concat(Object other) const;
-        /*
             Determine if this contains value. If an item in o is equal to value, return 1,
-            otherwise return 0. On error, return -1. This is equivalent to the Python
-            expression value in o.
+            otherwise return 0.
+            On error Py::Exception::Error object is raised on C++ side
+            and Exception is set on Python side.
+            This is equivalent to the Python expression value in o.
         */
-        int         Contains(Object other) const;
+        int     Contains(Object other) const;
         /*
             Return the number of occurrences of value in this, that is, return the number of
-            keys for which o[key] == value. On failure, return -1. This is equivalent to
-            the Python expression o.count(value).
+            keys for which o[key] == value.
+            On error Py::Exception::Error object is raised on C++ side
+            and Exception is set on Python side. T
+            his is equivalent to the Python expression o.count(value).
         */
         Py_ssize_t  Count(Object other) const;
         /*
-            Return the first index i for which o[i] == value. On error, return -1. This is
-            equivalent to the Python expression o.index(value).
+            Return the first index i for which o[i] == value.
+            On error Py::Exception::Error object is raised on C++ side
+            and Exception is set on Python side.
+            This is equivalent to the Python expression o.index(value).
         */
         Py_ssize_t  Index(Object other) const;
         // Iterator begin
-        iterator begin() { return iterator(this, 0); }
+        iterator    begin() { return iterator(this, 0); }
         // Iterator end
-        iterator end() { return iterator(this, Length()); }
+        iterator    end() { return iterator(this, Length()); }
     };
 }

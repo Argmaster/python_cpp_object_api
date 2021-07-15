@@ -77,6 +77,7 @@ namespace Py
         */
         Object(nullptr_t ptr) : m_ref(nullptr) {}
         // default constructor for C++ container usage
+        // TODO Individual default constructors for different types
         Object() : m_ref(nullptr) {}
         /**
             @brief When dies always decrefs underlying PyObject pointer (null-safe) */

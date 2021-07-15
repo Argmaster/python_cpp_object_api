@@ -27,7 +27,7 @@ target_link_libraries(
     ${PYTHON_LIB_FILES}
 )
 
-if (python_cpp_object_api_TESTS STREQUAL ON)
+if (NOT (python_cpp_object_api_OMIT_TESTS STREQUAL YES))
     enable_testing()
 
     add_executable(Unit_Object ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Object.cpp)
@@ -49,8 +49,21 @@ if (python_cpp_object_api_TESTS STREQUAL ON)
     add_test("Py::Tuple methods" Unit_Tuple "2")
 
     add_executable(Unit_List ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_List.cpp)
-    add_test("Py::List construction" Unit_List "1")
-    add_test("Py::List methods" Unit_List "2")
+    add_test("Py::List from PyObject* construction" Unit_List "1")
+    add_test("Py::List from initializer list construction" Unit_List "2")
+    add_test("Py::List from size construction" Unit_List "3")
+    add_test("Py::List method GetItem" Unit_List "4")
+    add_test("Py::List method SetItem" Unit_List "5")
+    add_test("Py::List method GetSlice" Unit_List "6")
+    add_test("Py::List method SetSlice" Unit_List "7")
+    add_test("Py::List method Append" Unit_List "8")
+    add_test("Py::List method Insert" Unit_List "9")
+    add_test("Py::List method Sort" Unit_List "10")
+    add_test("Py::List method Reverse" Unit_List "11")
+    add_test("Py::List method ToTuple" Unit_List "12")
+    add_test("Py::List method Contains" Unit_List "13")
+    add_test("Py::List method Count" Unit_List "14")
+    add_test("Py::List method Index" Unit_List "15")
 
     add_executable(Unit_Dict ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Dict.cpp)
     add_test("Py::Dict construction" Unit_Dict "1")

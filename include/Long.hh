@@ -44,4 +44,5 @@ namespace Py
         */
         inline int64_t AsLongLong_Overflow(int *overflow) { return PyLong_AsLongLongAndOverflow(m_ref, overflow); }
     };
+    typedef Long Int;
 }
