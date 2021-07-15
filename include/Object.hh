@@ -5,7 +5,6 @@
 #endif
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
-#include <datetime.h>
 #ifdef _DEBUG_MARKER
 #undef _DEBUG_MARKER
 #define _DEBUG 1
@@ -174,11 +173,6 @@ namespace Py
         inline bool         IsGenerator() { return PyGen_CheckExact(m_ref); }
         inline bool         IsCapsule() { return PyCapsule_CheckExact(m_ref); }
         inline bool         IsCoroutine() { return PyCoro_CheckExact(m_ref); }
-        inline bool         IsDate() { return PyDate_CheckExact(m_ref); }
-        inline bool         IsDateTime() { return PyDateTime_CheckExact(m_ref); }
-        inline bool         IsTime() { return PyTime_CheckExact(m_ref); }
-        inline bool         IsDelta() { return PyDelta_CheckExact(m_ref); }
-        inline bool         IsTZInfo() { return PyTZInfo_CheckExact(m_ref); }
         inline bool         IsInstanceMethod() { return PyInstanceMethod_Check(m_ref); }
         inline bool         IsMethod() { return PyMethod_Check(m_ref); }
         /* -------------------------------------------------------------------------- */

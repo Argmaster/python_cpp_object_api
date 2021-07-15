@@ -31,9 +31,10 @@ if (NOT (python_cpp_object_api_OMIT_TESTS STREQUAL YES))
     enable_testing()
 
     add_executable(Unit_Object ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Object.cpp)
-    add_test("Py::Object construction" Unit_Object "1")
-    add_test("Py::Object casts" Unit_Object "2")
-    add_test("Py::Object methods" Unit_Object "3")
+    add_test("Py::Object from PyObject*" Unit_Object "1")
+    add_test("Py::Object copy & move" Unit_Object "2")
+    add_test("Py::Object reference count" Unit_Object "3")
+    add_test("Py::Object As<>() type cast" Unit_Object "4")
 
     add_executable(Unit_Str ${GLOB_SOURCES} ${PROJECT_SOURCE_DIR}/test/u_Str.cpp)
     add_test("Py::Str construction" Unit_Str "1")
