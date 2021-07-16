@@ -63,30 +63,32 @@ namespace Py
         PyObject* m_ref = nullptr;
         /*
             Create new object with reference to new PyObject (steal reference) */
-        Object(PyObject* py_object);
+        Object( PyObject* py_object );
     public:
         /*
             Copies reference contained by Object, refcount is incremented */
-        Object(const Object& copied_object);
+        Object( const Object& copied_object );
         /**
             @brief Moves reference contained by Object, refcount is not incremented */
-        Object(Object&& moved_object);
+        Object( Object&& moved_object );
         /*
             Null Initialize
         */
-        Object(nullptr_t ptr) : m_ref(nullptr) {}
+        Object( nullptr_t ptr ) : m_ref( nullptr ) {}
         // default constructor for C++ container usage
         // TODO Individual default constructors for different types
-        Object() : m_ref(nullptr) {}
+        Object() : m_ref( nullptr ) {}
         /**
             @brief When dies always decrefs underlying PyObject pointer (null-safe) */
-        virtual ~Object() {
-            Py_XDECREF(m_ref);
+        virtual ~Object()
+        {
+            Py_XDECREF( m_ref );
         }
-        Object& operator= (const Object& other) {
+        Object& operator= ( const Object& other )
+        {
             if (this != &other) {
-                Py_XDECREF(this->m_ref);
-                Py_XINCREF(other.m_ref);
+                Py_XDECREF( this->m_ref );
+                Py_XINCREF( other.m_ref );
                 this->m_ref = other.m_ref;
             }
             return *this;
@@ -94,14 +96,14 @@ namespace Py
         /**
             @brief Construct Wrapper_T out of New PyObject Reference */
         template<typename Wrapper_T>
-        friend Wrapper_T New(PyObject* py_new_ref);
+        friend Wrapper_T New( PyObject* py_new_ref );
         /**
             @brief Construct Wrapper_T out of Borrowed PyObject Reference */
         template<typename Wrapper_T>
-        friend Wrapper_T Old(PyObject* py_weak_ref);
+        friend Wrapper_T Old( PyObject* py_weak_ref );
         /**
             @brief stream out operator overload */
-        friend std::ostream& operator << (std::ostream& os, const Object& py_object);
+        friend std::ostream& operator << ( std::ostream& os, const Object& py_object );
         /**
             @brief Explicit shortcut for null test */
         inline bool         IsNull() const { return m_ref == NULL; }
@@ -110,28 +112,28 @@ namespace Py
         inline bool         IsNotNull() const { return m_ref != NULL; }
         /**
             @brief  Acquire reference count of underlying PyObject */
-        inline Py_ssize_t   RefC() const { return Py_REFCNT(m_ref); }
+        inline Py_ssize_t   RefC() const { return Py_REFCNT( m_ref ); }
         /**
             @brief Acquire PyObject contained in this Object */
         inline PyObject*    GetRef() const { return m_ref; }
         /**
             @brief Increment reference count of underlying PyObject */
-        Object          INCREF() const { Py_XINCREF(m_ref); return *this; };
+        Object          INCREF() const { Py_XINCREF( m_ref ); return *this; };
         /**
             @brief Increment reference count of underlying PyObject */
-        Object          operator ++ () const { Py_XINCREF(m_ref); return *this; };
+        Object          operator ++ () const { Py_XINCREF( m_ref ); return *this; };
         /**
             @brief Increment reference count of underlying PyObject */
-        Object          operator ++ (int) const { Py_XINCREF(m_ref); return *this; };
+        Object          operator ++ ( int ) const { Py_XINCREF( m_ref ); return *this; };
         /**
             @brief Decrement reference count of underlying PyObject */
-        Object          DECREF() const { Py_XDECREF(m_ref); return *this; };
+        Object          DECREF() const { Py_XDECREF( m_ref ); return *this; };
         /**
             @brief Decrement reference count of underlying PyObject */
-        Object          operator -- () const { Py_XDECREF(m_ref); return *this; };
+        Object          operator -- () const { Py_XDECREF( m_ref ); return *this; };
         /**
             @brief Decrement reference count of underlying PyObject */
-        Object          operator -- (int) const { Py_XDECREF(m_ref); return *this; };
+        Object          operator -- ( int ) const { Py_XDECREF( m_ref ); return *this; };
         /* -------------------------------------------------------------------------- */
         /*                 Implicit dynamic casts among wrapper types                 */
         /* -------------------------------------------------------------------------- */
@@ -140,41 +142,68 @@ namespace Py
             @brief Reinterpret object as different type
         */
         template<class cast_type>
-        cast_type           As() const { return Old<cast_type>(m_ref); }
+        cast_type           As() const { return Old<cast_type>( m_ref ); }
         /* -------------------------------------------------------------------------- */
         /*                            Type checks shortcuts                           */
         /* -------------------------------------------------------------------------- */
-        inline bool         IsLong() { return PyLong_CheckExact(m_ref); }
-        inline bool         IsFloat() { return PyFloat_CheckExact(m_ref); }
-        inline bool         IsComplex() { return PyComplex_CheckExact(m_ref); }
-        inline bool         IsNumber() { return PyNumber_Check(m_ref); }
-        inline bool         IsBool() { return PyBool_Check(m_ref); }
-        inline bool         IsStr() { return PyUnicode_CheckExact(m_ref); }
-        inline bool         IsBytes() { return PyBytes_CheckExact(m_ref); }
-        inline bool         IsByteArray() { return PyByteArray_CheckExact(m_ref); }
-        inline bool         IsList() { return PyList_CheckExact(m_ref); }
-        inline bool         IsTuple() { return PyTuple_CheckExact(m_ref); }
-        inline bool         IsSequence() { return PySequence_Check(m_ref); }
-        inline bool         IsBuffer() { return PyObject_CheckBuffer(m_ref); }
-        inline bool         IsCallable() { return PyCallable_Check(m_ref); }
-        inline bool         IsIterator() { return PyIter_Check(m_ref); }
-        inline bool         IsDict() { return PyDict_CheckExact(m_ref); }
-        inline bool         IsMapping() { return PyMapping_Check(m_ref); }
-        inline bool         IsSet() { return PyAnySet_CheckExact(m_ref); }
-        inline bool         IsFrozenSet() { return PyFrozenSet_CheckExact(m_ref); }
-        inline bool         IsModule() { return PyModule_CheckExact(m_ref); }
-        inline bool         IsFunction() { return PyFunction_Check(m_ref); }
-        inline bool         IsCFunction() { return PyCFunction_Check(m_ref); }
-        inline bool         IsType() { return PyType_CheckExact(m_ref); }
-        inline bool         IsNone() { return m_ref == Py_None; }
-        inline bool         IsEllipsis() { return m_ref == Py_Ellipsis; }
-        inline bool         IsSlice() { return PySlice_Check(m_ref); }
-        inline bool         IsMemoryView() { return PyMemoryView_Check(m_ref); }
-        inline bool         IsGenerator() { return PyGen_CheckExact(m_ref); }
-        inline bool         IsCapsule() { return PyCapsule_CheckExact(m_ref); }
-        inline bool         IsCoroutine() { return PyCoro_CheckExact(m_ref); }
-        inline bool         IsInstanceMethod() { return PyInstanceMethod_Check(m_ref); }
-        inline bool         IsMethod() { return PyMethod_Check(m_ref); }
+        inline bool         IsLong() const { return PyLong_CheckExact( m_ref ); }
+        inline bool         IsFloat() const { return PyFloat_CheckExact( m_ref ); }
+        inline bool         IsComplex() const { return PyComplex_CheckExact( m_ref ); }
+        inline bool         IsNumber() const { return PyNumber_Check( m_ref ); }
+        inline bool         IsBool() const { return PyBool_Check( m_ref ); }
+        inline bool         IsStr() const { return PyUnicode_CheckExact( m_ref ); }
+        inline bool         IsBytes() const { return PyBytes_CheckExact( m_ref ); }
+        inline bool         IsByteArray() const { return PyByteArray_CheckExact( m_ref ); }
+        inline bool         IsList() const { return PyList_CheckExact( m_ref ); }
+        inline bool         IsTuple() const { return PyTuple_CheckExact( m_ref ); }
+        inline bool         IsSequence() const { return PySequence_Check( m_ref ); }
+        inline bool         IsBuffer() const { return PyObject_CheckBuffer( m_ref ); }
+        inline bool         IsCallable() const { return PyCallable_Check( m_ref ); }
+        inline bool         IsIterator() const { return PyIter_Check( m_ref ); }
+        inline bool         IsDict() const { return PyDict_CheckExact( m_ref ); }
+        inline bool         IsMapping() const { return PyMapping_Check( m_ref ); }
+        inline bool         IsSet() const { return PyAnySet_CheckExact( m_ref ); }
+        inline bool         IsFrozenSet() const { return PyFrozenSet_CheckExact( m_ref ); }
+        inline bool         IsModule() const { return PyModule_CheckExact( m_ref ); }
+        inline bool         IsFunction() const { return PyFunction_Check( m_ref ); }
+        inline bool         IsCFunction() const { return PyCFunction_Check( m_ref ); }
+        inline bool         IsType() const { return PyType_CheckExact( m_ref ); }
+        inline bool         IsNone() const { return m_ref == Py_None; }
+        inline bool         IsEllipsis() const { return m_ref == Py_Ellipsis; }
+        inline bool         IsSlice() const { return PySlice_Check( m_ref ); }
+        inline bool         IsMemoryView() const { return PyMemoryView_Check( m_ref ); }
+        inline bool         IsGenerator() const { return PyGen_CheckExact( m_ref ); }
+        inline bool         IsCapsule() const { return PyCapsule_CheckExact( m_ref ); }
+        inline bool         IsCoroutine() const { return PyCoro_CheckExact( m_ref ); }
+        inline bool         IsInstanceMethod() const { return PyInstanceMethod_Check( m_ref ); }
+        inline bool         IsMethod() const { return PyMethod_Check( m_ref ); }
+        /**
+            @brief Return 1 if the class derived is identical to or derived from the class cls,
+                otherwise return 0. In case of an error, return -1.
+                If cls is a tuple, the check will be done against every entry in cls.
+                The result will be 1 when at least one of the checks returns 1, otherwise it will be 0.
+        */
+        int             IsSubclass( PyTypeObject& cls ) const { return PyObject_IsSubclass( m_ref, (PyObject*)&cls ); }
+        /**
+            @brief Return 1 if inst is an instance of the class cls or a subclass of cls, or 0 if not.
+                On error, returns - 1 and sets an exception.
+                If cls is a tuple, the check will be done against every entry in cls.
+                The result will be 1 when at least one of the checks returns 1, otherwise it will be 0.
+        */
+        int             IsInstance( PyTypeObject& cls ) const { return PyObject_IsInstance( m_ref, (PyObject*)&cls ); }
+        /**
+            @brief When o is non-NULL, returns a type object corresponding to the object type of object o.
+                On failure, raises SystemError and returns NULL. This is equivalent to the Python
+                expression type(o). This function increments the reference count of the return value.
+                There’s really no reason to use this function instead of the common expression
+                o->ob_type, which returns a pointer of type PyTypeObject*, except when the incremented
+                reference count is needed.
+        */
+        Object          GetType() const { return Old<Object>( PyObject_Type( m_ref ) ); }
+        /**
+            @brief Return true if the object o is of type type or a subtype of type. Both parameters must be non - NULL.
+        */
+        bool            IsType( PyTypeObject* py_type ) const { return PyObject_TypeCheck( m_ref, py_type ); }
         /* -------------------------------------------------------------------------- */
         /*                          Getters, setter, deleters                         */
         /* -------------------------------------------------------------------------- */
@@ -188,104 +217,104 @@ namespace Py
                 forcibly DECREF object INCREFED by HasAttr, It will very likely cause SEGFAULTS
                 in least expected palces
         */
-        virtual bool            HasAttr(Str attr_name) const;
+        virtual bool            HasAttr( Str attr_name ) const;
         /**
             @brief Retrieve an attribute named attr_name from object o.
             Returns the attribute value on success, or NULL on failure.
             This is the equivalent of the Python expression o.attr_name.
         */
-        virtual Object          GetAttr(Str attr_name) const;
+        virtual Object          GetAttr( Str attr_name ) const;
         /**
             @brief Set the value of the attribute named attr_name, for object o, to the value v.
                 Raise an exception and throw on failure.This is the equivalent of the Python
                 statement o.attr_name = v. If v is NULL, the attribute is deleted, however
                 this feature is deprecated in favour of using PyObject_DelAttr().
         */
-        virtual void            SetAttr(Str attr_name, PyObject* value) const;
+        virtual void            SetAttr( Str attr_name, PyObject* value ) const;
         /**
             @brief Delete attribute named attr_name, for object o. Returns -1 on failure.
                 This is the equivalent of the Python statement del o.attr_name.
         */
-        virtual int             DelAttr(Str attr_name) const;
+        virtual int             DelAttr( Str attr_name ) const;
         /**
             @brief Return element of o corresponding to the object key or NULL on failure.
                 This is the equivalent of the Python expression o[key].
         */
-        virtual Object          GetItem(Object attr_name) const;
+        virtual Object          GetItem( Object attr_name ) const;
         /**
             @brief Map the object key to the value v. Raise an exception and return -1 on failure;
                 return 0 on success.This is the equivalent of the Python statement o[key] = v.
                 This function does not steal a reference to v.
         */
-        virtual int             SetItem(Object attr_name, PyObject * value) const;
+        virtual int             SetItem( Object attr_name, PyObject * value ) const;
         /**
             @brief Remove the mapping for the object key from the object o. Return -1 on failure.
                 This is equivalent to the Python statement del o[key].
         */
-        virtual int             DelItem(Object attr_name) const;
+        virtual int             DelItem( Object attr_name ) const;
         /* -------------------------------------------------------------------------- */
         /*                                 Comparisons                                */
         /* -------------------------------------------------------------------------- */
         /// Less than comparison. This is the equivalent of the Python expression a < b
-        int             LessThan(Object other) const;
+        int             LessThan( Object other ) const;
         /// Less than comparison. This is the equivalent of the Python expression a < b
-        int             operator < (Object other) const;
+        int             operator < ( Object other ) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        int             LessEqual(Object other) const;
+        int             LessEqual( Object other ) const;
         /// Less or equal comparison. This is the equivalent of the Python expression a <= b
-        int             operator <= (Object other) const;
+        int             operator <= ( Object other ) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
-        int             Equals(Object other) const;
+        int             Equals( Object other ) const;
         /// Equal comparison. This is the equivalent of the Python expression a == b
-        int             operator == (Object other) const;
+        int             operator == ( Object other ) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
-        int             NotEquals(Object other) const;
+        int             NotEquals( Object other ) const;
         /// Not equal comparison. This is the equivalent of the Python expression a != b
-        int             operator != (Object other) const;
+        int             operator != ( Object other ) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
-        int             GreaterThan(Object other) const;
+        int             GreaterThan( Object other ) const;
         /// Greater than comparison. This is the equivalent of the Python expression a > b
-        int             operator > (Object other) const;
+        int             operator > ( Object other ) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        int             GreaterEqual(Object other) const;
+        int             GreaterEqual( Object other ) const;
         /// Greater or equal comparison. This is the equivalent of the Python expression a >= b
-        int             operator >= (Object other) const;
+        int             operator >= ( Object other ) const;
         /* -------------------------------------------------------------------------- */
         /*                             Numerical operators                            */
         /* -------------------------------------------------------------------------- */
         /// Returns the result of adding o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 + o2
-        Object          Add(Object other) const;
+        Object          Add( Object other ) const;
         /// Returns the result of adding o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 + o2
-        Object          operator + (Object other) const;
+        Object          operator + ( Object other ) const;
         /// Returns the result of subtracting o2 from o1, or NULL on failure. This is the equivalent of the Python expression o1 - o2.
-        Object          Sub(Object other) const;
+        Object          Sub( Object other ) const;
         /// Returns the result of subtracting o2 from o1, or NULL on failure. This is the equivalent of the Python expression o1 - o2.
-        Object          operator - (Object other) const;
+        Object          operator - ( Object other ) const;
         /// Returns the result of multiplying o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 * o2.
-        Object          Mul(Object other) const;
+        Object          Mul( Object other ) const;
         /// Returns the result of multiplying o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 * o2.
-        Object          operator * (Object other) const;
+        Object          operator * ( Object other ) const;
         /// Returns the result of matrix multiplication on o1 and o2, or NULL on failure. This is the equivalent of the Python expression o1 @ o2.
-        Object          MatMul(Object other) const;
+        Object          MatMul( Object other ) const;
         /// Return the floor of o1 divided by o2, or NULL on failure. This is equivalent to the “classic” division of integers
-        Object          FloorDiv(Object other) const;
+        Object          FloorDiv( Object other ) const;
         /**
             @brief Return a reasonable approximation for the mathematical value of o1 divided by o2,
             or NULL on failure. The return value is “approximate” because binary floating point
             numbers are approximate; it is not possible to represent all real numbers in base two.
             This function can return a floating point value when passed two integers.
         */
-        Object          TrueDiv(Object other) const;
+        Object          TrueDiv( Object other ) const;
         /// Shortcut for TrueDiv
-        Object          operator / (Object other) const;
+        Object          operator / ( Object other ) const;
         /// Returns the remainder of dividing o1 by o2, or NULL on failure. This is the equivalent of the Python expression o1 % o2.
-        Object          Mod(Object other) const;
+        Object          Mod( Object other ) const;
         /// Returns the remainder of dividing o1 by o2, or NULL on failure. This is the equivalent of the Python expression o1 % o2.
-        Object          operator % (Object other) const;
+        Object          operator % ( Object other ) const;
         /// See the built-in function divmod(). Returns NULL on failure. This is the equivalent of the Python expression divmod(o1, o2).
-        Object          DivMod(Object other) const;
+        Object          DivMod( Object other ) const;
         /// This is the equivalent of the Python expression o1 ** o2.
-        Object          Pow(Object other) const;
+        Object          Pow( Object other ) const;
         /// Returns the negation of o on success, or NULL on failure. This is the equivalent of the Python expression -o.
         Object          Neg() const;
         /// Returns the negation of o on success, or NULL on failure. This is the equivalent of the Python expression -o.
@@ -301,25 +330,25 @@ namespace Py
         /// Returns the bitwise negation of o on success, or NULL on failure. This is the equivalent of the Python expression ~o
         Object          operator ~ () const;
         /// Returns the result of left shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 << o2.
-        Object          LShift(Object other) const;
+        Object          LShift( Object other ) const;
         /// Returns the result of left shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 << o2.
-        Object          operator << (Object other) const;
+        Object          operator << ( Object other ) const;
         /// Returns the result of right shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 >> o2.
-        Object          RShift(Object other) const;
+        Object          RShift( Object other ) const;
         /// Returns the result of right shifting o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 >> o2.
-        Object          operator >>(Object other) const;
+        Object          operator >>( Object other ) const;
         /// Returns the “bitwise and” of o1 and o2 on success and NULL on failure. This is the equivalent of the Python expression o1 & o2.
-        Object          And(Object other) const;
+        Object          And( Object other ) const;
         /// Returns the “bitwise and” of o1 and o2 on success and NULL on failure. This is the equivalent of the Python expression o1 & o2.
-        Object          operator & (Object other) const;
+        Object          operator & ( Object other ) const;
         /// Returns the “bitwise or” of o1 and o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 | o2.
-        Object          Or(Object other) const;
+        Object          Or( Object other ) const;
         /// Returns the “bitwise or” of o1 and o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 | o2.
-        Object          operator | (Object other) const;
+        Object          operator | ( Object other ) const;
         /// Returns the “bitwise exclusive or” of o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 ^ o2.
-        Object          Xor(Object other) const;
+        Object          Xor( Object other ) const;
         /// Returns the “bitwise exclusive or” of o1 by o2 on success, or NULL on failure. This is the equivalent of the Python expression o1 ^ o2.
-        Object          operator ^ (Object other) const;
+        Object          operator ^ ( Object other ) const;
         /* -------------------------------------------------------------------------- */
         /*                       Type operations and conversions                      */
         /* -------------------------------------------------------------------------- */
@@ -386,7 +415,7 @@ namespace Py
                 for the object argument, or the object itself if the object is already an iterator.
                 Raises TypeError and returns NULL if the object cannot be iterated.
         */
-        Object          Iter() { return PyObject_GetIter(m_ref); }
+        Object          Iter() { return PyObject_GetIter( m_ref ); }
         /**
             Call a callable Python object with arguments given by the
             tuple 'args' and keywords arguments given by the dictionary 'kwargs'.
@@ -397,7 +426,7 @@ namespace Py
             This is the equivalent of the Python expression:
             callable(*args, **kwargs).
         */
-        Object          Call(Tuple args, Dict kwargs) const;
+        Object          Call( Tuple args, Dict kwargs ) const;
         /**
             Call function retreived with GetAttr by name with arguments given by the
             tuple 'args' and keywords arguments given by the dictionary 'kwargs'.
@@ -408,37 +437,7 @@ namespace Py
             This is the equivalent of the Python expression:
             callable(*args, **kwargs).
         */
-        Object          Call(std::string name, Tuple args, Dict kwargs) const;
-        /* -------------------------------------------------------------------------- */
-        /*                           Type checks and friends                          */
-        /* -------------------------------------------------------------------------- */
-        /**
-            @brief Return 1 if the class derived is identical to or derived from the class cls,
-                otherwise return 0. In case of an error, return -1.
-                If cls is a tuple, the check will be done against every entry in cls.
-                The result will be 1 when at least one of the checks returns 1, otherwise it will be 0.
-        */
-        int             IsSubclass(Object cls) const { return PyObject_IsSubclass(m_ref, cls); }
-        /**
-            @brief Return 1 if inst is an instance of the class cls or a subclass of cls, or 0 if not.
-                On error, returns - 1 and sets an exception.
-                If cls is a tuple, the check will be done against every entry in cls.
-                The result will be 1 when at least one of the checks returns 1, otherwise it will be 0.
-        */
-        int             IsInstance(Object cls) const { return PyObject_IsInstance(m_ref, cls); }
-        /**
-            @brief When o is non-NULL, returns a type object corresponding to the object type of object o.
-                On failure, raises SystemError and returns NULL. This is equivalent to the Python
-                expression type(o). This function increments the reference count of the return value.
-                There’s really no reason to use this function instead of the common expression
-                o->ob_type, which returns a pointer of type PyTypeObject*, except when the incremented
-                reference count is needed.
-        */
-        Object          Type() const { return PyObject_Type(m_ref); }
-        /**
-            @brief Return true if the object o is of type type or a subtype of type.Both parameters must be non - NULL.
-        */
-        bool            TypeCheck(PyTypeObject* py_type) const { return PyObject_TypeCheck(m_ref, py_type); }
+        Object          Call( std::string name, Tuple args, Dict kwargs ) const;
         /**
             @brief This is equivalent to the Python expression dir(o), returning a (possibly empty)
                 list of strings appropriate for the object argument, or NULL if there was an error.
@@ -446,30 +445,34 @@ namespace Py
                 current locals; in this case, if no execution frame is active then NULL is returned
                 but PyErr_Occurred() will return false.
         */
-        Object          Dir() { return PyObject_Dir(m_ref); }
+        Object          Dir() { return PyObject_Dir( m_ref ); }
     };
     /**
         @brief Create Python Object wrapper from PyObject* new reference (counted)
     */
     template<typename Wrapper_T>
-    Wrapper_T New(PyObject* py_new_ref) {
-        return Wrapper_T(py_new_ref);
+    Wrapper_T New( PyObject* py_new_ref )
+    {
+        return Wrapper_T( py_new_ref );
     }
     /**
         @brief Create Python Object wrapper from PyObject* weak reference (not counted/owned by sb else)
     */
     template<typename Wrapper_T>
-    Wrapper_T Old(PyObject* py_weak_ref) {
-        Py_XINCREF(py_weak_ref);
-        return Wrapper_T(py_weak_ref);
+    Wrapper_T Old( PyObject* py_weak_ref )
+    {
+        Py_XINCREF( py_weak_ref );
+        return Wrapper_T( py_weak_ref );
     }
     template<typename T, typename... Args>
-    void print(T param, Args... args) {
+    void print( T param, Args... args )
+    {
         std::cout << param << " ";
-        print(args...);
+        print( args... );
     }
     template<typename T>
-    void print(T param) {
+    void print( T param )
+    {
         std::cout << param << std::endl;
     }
 } // namespace Py
