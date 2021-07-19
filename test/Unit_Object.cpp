@@ -123,6 +123,7 @@ void number_ops()
     assert( value_3.FloorDiv( value_4 ).As<Py::Int>().AsLongLong() == 2 );
     assert( value_3.TrueDiv( value_4 ).As<Py::Float>().AsDouble() == 2.0 );
     assert( (value_3 / value_4).As<Py::Float>().AsDouble() == 2.0 );
+    assert( value_3.Mod( value_4 ).As<Py::Float>().AsDouble() == 0.0 );
     assert( value_1.Neg().As<Py::Int>().AsLongLong() == -7 );
     assert( (-value_1).As<Py::Int>().AsLongLong() == -7 );
     assert( value_1.Pos().As<Py::Int>().AsLongLong() == 7 );
@@ -136,6 +137,11 @@ void number_ops()
     assert( value_2.Or( value_3 ).As<Py::Int>().AsLongLong() == 7 );
     assert( value_2.Xor( value_3 ).As<Py::Int>().AsLongLong() == 7 );
 }
+void conversions()
+{
+
+}
+// TODO add exceptions to Py::Object methods (numerical and comparisons)
 int main( int argc, char* argv[], char* env[] )
 {
     Py_Initialize();
@@ -181,6 +187,11 @@ int main( int argc, char* argv[], char* env[] )
             number_ops();
             break;
         }
+        case(9):
+        {
+            conversions();
+            break;
+        }
         default:
         {
             from_py_object_ptr_construct();
@@ -191,6 +202,7 @@ int main( int argc, char* argv[], char* env[] )
             attr_n_item_methods();
             comaprisons();
             number_ops();
+            conversions();
             break;
         }
     }

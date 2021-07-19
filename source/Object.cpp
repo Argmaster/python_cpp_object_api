@@ -109,7 +109,7 @@ namespace Py
         } else
             return Str("<PyObject NULL>");
     }
-    std::string     Object::ReprCStr() const {
+    std::string     Object::ReprCString() const {
         if (IsNotNull()) {
             auto repr = PyObject_Repr(m_ref);
             if (repr == NULL) {
@@ -137,7 +137,7 @@ namespace Py
     }
     // IO stream overload
     std::ostream& operator << (std::ostream& os, const Object& py_object) {
-        const std::string buff = py_object.ReprCStr();
+        const std::string buff = py_object.ReprCString();
         os.write(buff.c_str(), buff.length());
         return os;
     }

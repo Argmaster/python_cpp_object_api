@@ -255,6 +255,7 @@ namespace Py
         /* -------------------------------------------------------------------------- */
         /*                                 Comparisons                                */
         /* -------------------------------------------------------------------------- */
+        // NULL on failure
         /// Less than comparison. This is the equivalent of the Python expression a < b
         int             LessThan( Object other ) const;
         /// Less than comparison. This is the equivalent of the Python expression a < b
@@ -361,7 +362,7 @@ namespace Py
         /**
             @brief  Same as Repr, but returns C++ string
         */
-        std::string     ReprCStr() const;
+        std::string     ReprCString() const;
         /**
             @brief As PyObject_Repr(), compute a string representation of object o,
                 but escape the non-ASCII characters in the string returned by PyObject_Repr()
@@ -403,13 +404,13 @@ namespace Py
             sequence and mapping protocols, the sequence length is returned.
             On error, -1 is returned.This is the equivalent to the Python expression len(o).
         */
-        virtual Py_ssize_t Size() const;
+        Py_ssize_t Size() const;
         /**
             @brief Return the length of object o. If the object o provides either the
                 sequence and mapping protocols, the sequence length is returned.
                 On error, -1 is returned.This is the equivalent to the Python expression len(o).
         */
-        virtual Py_ssize_t Length() const;
+        Py_ssize_t Length() const;
         /**
             @brief This is equivalent to the Python expression iter(o). It returns a new iterator
                 for the object argument, or the object itself if the object is already an iterator.

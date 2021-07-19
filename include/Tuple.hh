@@ -82,14 +82,6 @@ namespace Py
                 doesn't steal reference to Object.
         */
         int         SetItem(Py_ssize_t index, Object value) const;
-        /**
-            @brief Return size of this tuple
-        */
-        Py_ssize_t Size() const override;
-        /**
-            @brief Return size of this tuple
-        */
-        Py_ssize_t  Length() const override;
         /*
             Return the concatenation of o1 and o2 on success, and NULL on failure.
             This is the equivalent of the Python expression o1 + o2.
